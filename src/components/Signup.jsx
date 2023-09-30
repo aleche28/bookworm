@@ -26,7 +26,7 @@ const Signup = () => {
       setErrMsg("");
       const res = await signUp(email, password);
       if (res.error) setErrMsg(res.error);
-      else navigate("/");
+      else navigate("/login");
     }
   };
 
