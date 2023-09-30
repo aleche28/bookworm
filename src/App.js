@@ -4,10 +4,10 @@ import { AuthProvider } from "./auth/AuthProvider";
 import AuthContext from "./auth/AuthContext";
 import LoginForm from "./components/LoginForm";
 import Signup from "./components/Signup";
+import { logout } from "./auth/auth";
 
 import "bootstrap/dist/css/bootstrap.min.css";
 import 'bootstrap-icons/font/bootstrap-icons.css';
-import { logout } from "./auth/auth";
 
 function App() {
   return (
