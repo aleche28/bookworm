@@ -1,7 +1,11 @@
 import { db } from "./firebase";
 import { doc, getDoc } from "firebase/firestore";
 
-async function getReadList(uid) {
+async function getList(uid, type) {
+  if (type !== "read_books" && type !== "toread_books" && type !== "reading_books") {
+    throw new Error("This type of list does not exist.");
+  }
+
   const docRef = doc(db, "read_books", uid);
   const docSnap = await getDoc(docRef);
 
@@ -17,4 +21,4 @@ async function getReadList(uid) {
   }
 }
 
-export { getReadList };
+export { getList };

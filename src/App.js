@@ -8,7 +8,7 @@ import { logout } from "./auth/auth";
 
 import "bootstrap/dist/css/bootstrap.min.css";
 import 'bootstrap-icons/font/bootstrap-icons.css';
-import { getReadList } from "./books";
+import { getList } from "./books";
 
 function App() {
   return (
@@ -32,7 +32,7 @@ function MainLayout() {
   async function fetchBooks() {
     if (user) {
       try {
-        const list = await getReadList(user.uid);
+        const list = await getList(user.uid, "read_books");
         setBooks(list);
       } catch(err) {
         setBooks([]);
