@@ -9,6 +9,7 @@ import { logout } from "./auth/auth";
 import "bootstrap/dist/css/bootstrap.min.css";
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import { getList, updateList } from "./books";
+import BookList from "./components/BookList";
 
 function App() {
   return (
@@ -16,6 +17,9 @@ function App() {
       <AuthProvider>
         <Routes>
           <Route path="/" element={<MainLayout />} />
+          <Route path="toread" element={<BookList listType="toread_books" listName="To read" />} />
+          <Route path="read" element={<BookList listType="read_books" listName="Read" />} />
+          <Route path="reading" element={<BookList listType="reading_books" listName="Reading" />} />
           <Route path="login" element={<LoginForm />} />
           <Route path="signup" element={<Signup />} />
         </Routes>
