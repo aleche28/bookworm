@@ -31,8 +31,8 @@ const BookList = (props) => {
   const handleAdd = async (title, author) => {
     const book = { title: title, author: author };
     await updateList(user.uid, props.listType, [...books, book]);
-
     fetchBooks();
+    setInfoMsg("Book added to the list");
   }
 
   const handleDelete = async (key) => {
@@ -43,8 +43,8 @@ const BookList = (props) => {
       return null;
     });
     await updateList(user.uid, props.listType, newlist);
-
     fetchBooks();
+    setInfoMsg("Book removed from the list");
   }
 
   return <>

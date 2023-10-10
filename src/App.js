@@ -10,6 +10,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import { getList, updateList } from "./books";
 import BookList from "./components/BookList";
+import { Row } from "react-bootstrap";
 
 function App() {
   return (
@@ -110,14 +111,14 @@ function MainLayout() {
     {user && 
       <>
         <h1>Authenticated</h1>
-        <h2>Reading now</h2>
-        {readinglist.map(b => <p>title: {b.title}, author: {b.author} </p>)}
+        <Link to={"/reading"}><h2>Reading now</h2></Link>
+        {readinglist.map((b, i) => <Row key={i}><p>title: {b.title}, author: {b.author} </p></Row>)}
         <button onClick={()=>handleAdd("reading_books")}>Add book reading</button>
-        <h2>To read</h2>
-        {toreadlist.map(b => <p>title: {b.title}, author: {b.author} </p>)}
+        <Link to={"/toread"}><h2>To read</h2></Link>
+        {toreadlist.map((b, i) => <Row key={i}><p>title: {b.title}, author: {b.author} </p></Row>)}
         <button onClick={()=>handleAdd("toread_books")}>Add book to read</button>
-        <h2>Read books</h2>
-        {readlist.map(b => <p>title: {b.title}, author: {b.author} </p>)}
+        <Link to={"/read"}><h2>Read</h2></Link>
+        {readlist.map((b, i) => <Row key={i}><p>title: {b.title}, author: {b.author} </p></Row>)}
         <button onClick={()=>handleAdd("read_books")}>Add read book</button>
 
         <button onClick={handleLogout}>Logout</button>
