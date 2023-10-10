@@ -1,12 +1,12 @@
 import { db } from "./firebase";
-import { doc, getDoc } from "firebase/firestore";
+import { doc, getDoc, setDoc } from "firebase/firestore";
 
 async function getList(uid, type) {
   if (type !== "read_books" && type !== "toread_books" && type !== "reading_books") {
     throw new Error("This type of list does not exist.");
   }
 
-  const docRef = doc(db, "read_books", uid);
+  const docRef = doc(db, type, uid);
   const docSnap = await getDoc(docRef);
 
   if (docSnap.exists()) {
@@ -21,4 +21,13 @@ async function getList(uid, type) {
   }
 }
 
-export { getList };
+async function updateList(uid, type, newList) {
+  if (type !== "read_books" && type !== "toread_books" && type !== "reading_books") {
+    throw new Error("This type of list does not exist.");
+  }
+
+  const docRef = doc(db, type, uid);
+  await setDoc(docRef, { list: newList }, { merge: true });
+}
+
+export { getList, updateList };
