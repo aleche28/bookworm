@@ -1,7 +1,7 @@
 import { useContext, useEffect, useState } from "react";
 import AuthContext from "../auth/AuthContext";
 import { getList, updateList } from "../books";
-import { Alert, Button, Form } from "react-bootstrap";
+import { Alert, Button, Form, Row } from "react-bootstrap";
 
 
 const BookList = (props) => {
@@ -35,12 +35,29 @@ const BookList = (props) => {
     fetchBooks();
   }
 
+  const handleDelete = async (key) => {
+    const newlist = [];
+    books.map((b, i) => {
+      if (key !== i)
+        newlist.push(b);
+      return null;
+    });
+    await updateList(user.uid, props.listType, newlist);
+
+    fetchBooks();
+  }
+
   return <>
     {errMsg && <Alert key={"danger"} variant="danger" onClose={() => setErrMsg("")} dismissible> {errMsg} </Alert>}
     {infoMsg && <Alert key={"success"} variant="success" onClose={() => setInfoMsg("")} dismissible> {infoMsg} </Alert>}
     
     <h2>{props.listName}</h2>
-    {books.map(b => <p>title: {b.title}, author: {b.author} </p>)}
+    {books.map((b, i) => 
+      <Row key={i}>
+        <p>title: {b.title}, author: {b.author}</p>
+        <Button onClick={() => handleDelete(i)}>Delete</Button>
+      </Row>
+      )}
     
     <AddBookForm handleAdd={handleAdd}/>
 
