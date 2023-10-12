@@ -2,15 +2,18 @@ import { useContext, useEffect, useState } from "react";
 import AuthContext from "../auth/AuthContext";
 import { getList, updateList } from "../books";
 import { Alert, Button, Col, Container, Form, OverlayTrigger, Row, Tooltip } from "react-bootstrap";
-import { Link } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 
 
 const BookList = (props) => {
   const { user } = useContext(AuthContext);
+  const location = useLocation();
+
   const [errMsg, setErrMsg] = useState("");
   const [infoMsg, setInfoMsg] = useState("");
-
   const [books, setBooks] = useState([]);
+
+  const [addBook, setAddBook] = useState(false);
 
   async function fetchBooks() {
     if (user) {
@@ -27,11 +30,12 @@ const BookList = (props) => {
   useEffect(() => {
     fetchBooks();
     // eslint-disable-next-line
-  }, [user]);
+  }, [user, location]);
 
   const handleAdd = async (title, author) => {
     const book = { title: title, author: author };
     await updateList(user.uid, props.listType, [...books, book]);
+    setAddBook(false);
     fetchBooks();
     setInfoMsg("Book added to the list");
   }
@@ -53,12 +57,15 @@ const BookList = (props) => {
     {infoMsg && <Alert key={"success"} variant="success" onClose={() => setInfoMsg("")} dismissible> {infoMsg} </Alert>}
     
     <h2>{props.listName}</h2>
-    <Container className="col-md-8 justify-content-left">
+    <Col xs={6}>
       {books.map((b, i) => <BookRow key={i} id={i} book={b} handleDelete={handleDelete}/>)}
-      <Container className="book-add-form my-3 py-3 px-5 border rounded">
-        <AddBookForm handleAdd={handleAdd}/>
-      </Container>
-    </Container>
+      {addBook ?
+        <Container className="book-add-form my-3 py-3 px-5 border rounded">
+          <AddBookForm handleAdd={handleAdd} setAddBook={setAddBook}/>
+        </Container>
+        :
+        <Button variant="success" onClick={() => setAddBook(true)}><i className="bi bi-plus"></i></Button>}
+    </Col>
 
   </>;
 };
@@ -68,6 +75,7 @@ const AddBookForm = (props) => {
   const [author, setAuthor] = useState("");
   
   const handleAdd = (event) => {
+    console.log("called");
     event.preventDefault();
     props.handleAdd(title, author);
   }
@@ -98,14 +106,16 @@ const AddBookForm = (props) => {
           }}
         />
       </Form.Group>
-      {/* <div className="d-grid gap-2"> */}
         <Row>
-          <Col xs={4}></Col>
-          <Button as={Col} xs={4} className="mb-3 mt-3" variant="success" type="submit">
+          <Col xs={2}></Col>
+          <Button className="col-3 mb-3 mt-3" variant="success" type="submit">
             Add
           </Button>
+          <Col xs={2}></Col>
+          <Button className="col-3 mb-3 mt-3" variant="secondary" onClick={() => props.setAddBook(false)}>
+            Cancel
+          </Button>
         </Row>
-      {/* </div> */}
     </Form>}
   </>;
 }
@@ -144,7 +154,7 @@ const BookRow = (props) => {
           </Button>
         </OverlayTrigger>
       </Col>
-      <Col className="book-row-btn">
+      <Col xs={1} className="book-row-btn">
         <Button variant="outline">
           <i className="bi bi-three-dots-vertical"></i>
         </Button>
