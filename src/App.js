@@ -123,14 +123,17 @@ function MainLayout() {
         {user && 
           <>
             <h1>Welcome back!</h1>
+            
             <h2>Reading now</h2>
-            {readinglist.map((b, i) => <Row key={i}><p>title: {b.title}, author: {b.author} </p></Row>)}
+            {readinglist.map((b, i) => <Row key={i}><p><strong>{b.title}</strong>, by {b.author} </p></Row>)}
             <Button as={Link} to={"/reading"} variant="success">Add</Button>
+            
             <h2>To read</h2>
-            {toreadlist.map((b, i) => <Row key={i}><p>title: {b.title}, author: {b.author} </p></Row>)}
+            {toreadlist.map((b, i) => <Row key={i}><p><strong>{b.title}</strong>, by {b.author} </p></Row>)}
             <Button as={Link} to={"/toread"} variant="success">Add</Button>
+            
             <h2>Read</h2>
-            {readlist.map((b, i) => <Row key={i}><p>title: {b.title}, author: {b.author} </p></Row>)}
+            {readlist.map((b, i) => <Row key={i}><p><strong>{b.title}</strong>, by {b.author} </p></Row>)}
             <Button as={Link} to={"/read"} variant="success">Add</Button>
           </> }
       
