@@ -10,7 +10,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import { getList, updateList } from "./books";
 import BookList from "./components/BookList";
-import { Row } from "react-bootstrap";
+import { Button, Container, Nav, Navbar, Row } from "react-bootstrap";
 
 function App() {
   return (
@@ -86,50 +86,61 @@ function MainLayout() {
     await logout();
   };
 
-  /* TEMP: just to test updateList */
-  const handleAdd = async (list) => {
-    const book = { title: "newbook", author: "newauthor" };
-    let newList = [];
-    switch (list) {
-      case "reading_books":
-        newList = [...readinglist, book];
-        break;
-      case "toread_books":
-        newList = [...toreadlist, book];
-        break;
-      case "read_books":
-        newList = [...readlist, book];
-        break;
-      default:
-        break;
-    }
-    await updateList(user.uid, list, newList);
-  }
-
   return (
     <>
-    {user && 
-      <>
-        <h1>Authenticated</h1>
-        <Link to={"/reading"}><h2>Reading now</h2></Link>
-        {readinglist.map((b, i) => <Row key={i}><p>title: {b.title}, author: {b.author} </p></Row>)}
-        <button onClick={()=>handleAdd("reading_books")}>Add book reading</button>
-        <Link to={"/toread"}><h2>To read</h2></Link>
-        {toreadlist.map((b, i) => <Row key={i}><p>title: {b.title}, author: {b.author} </p></Row>)}
-        <button onClick={()=>handleAdd("toread_books")}>Add book to read</button>
-        <Link to={"/read"}><h2>Read</h2></Link>
-        {readlist.map((b, i) => <Row key={i}><p>title: {b.title}, author: {b.author} </p></Row>)}
-        <button onClick={()=>handleAdd("read_books")}>Add read book</button>
-
-        <button onClick={handleLogout}>Logout</button>
-      </> }
+    <header>
+        <Navbar sticky="top" variant="dark" bg="success" expand="lg" className="mb-3">
+          <Container>
+            <Navbar.Brand>
+              <Link to="/" style={{ color: "white", textDecoration: "none" }}>
+                BookWorm
+              </Link>
+            </Navbar.Brand>
+            <Navbar.Toggle aria-controls="navbar" />
+              <Navbar.Collapse id="navbar">
+                <Nav className="me-auto">
+                  <Nav.Link as={Link} to={"/"}>Home</Nav.Link>
+                  <Nav.Link as={Link} to={"/toread"}>To read</Nav.Link>
+                  <Nav.Link as={Link} to={"/reading"}>Reading</Nav.Link>
+                  <Nav.Link as={Link} to={"/read"}>Read</Nav.Link>
+                </Nav>
+                <Navbar.Text className="m-0 p-0">
+                {user ? (
+                  <>
+                    <i className="bi bi-person-circle"></i>{" "}
+                    <span>{user.email}</span>{" "}
+                    <Link className="text-decoration-none ms-3" onClick={handleLogout}>Logout</Link>
+                  </>
+                ) : (
+                  <Nav.Link as={Link} to="/login">Login</Nav.Link>
+                )}
+              </Navbar.Text>
+            </Navbar.Collapse>
+          </Container>
+        </Navbar>
+      </header>
+      <main>
+        {user && 
+          <>
+            <h1>Welcome back!</h1>
+            <h2>Reading now</h2>
+            {readinglist.map((b, i) => <Row key={i}><p>title: {b.title}, author: {b.author} </p></Row>)}
+            <Button as={Link} to={"/reading"} variant="success">Add</Button>
+            <h2>To read</h2>
+            {toreadlist.map((b, i) => <Row key={i}><p>title: {b.title}, author: {b.author} </p></Row>)}
+            <Button as={Link} to={"/toread"} variant="success">Add</Button>
+            <h2>Read</h2>
+            {readlist.map((b, i) => <Row key={i}><p>title: {b.title}, author: {b.author} </p></Row>)}
+            <Button as={Link} to={"/read"} variant="success">Add</Button>
+          </> }
       
-    {!user && 
-      <>
-        <h1>Not Authenticated</h1>
-        <Link to="/login">Login</Link>
-      </>
-    }
+        {!user && 
+          <>
+            <h1>Not Authenticated</h1>
+            <Link to="/login">Login</Link>
+          </>}
+      </main>
+                  
     </>
   );
 }
