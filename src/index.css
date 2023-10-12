@@ -34,3 +34,26 @@ code {
 .below-button {
   text-align: center;
 }
+
+.book-row {
+  background-color:whitesmoke;
+  /* box-shadow: 5px 5px 5px rgba(34, 35, 58, 0.2); */
+}
+
+.book-row:hover {
+  /* cursor: pointer; */
+  background-color: rgb(229, 253, 222);
+}
+
+.book-row-btn {
+  display: flex;
+  flex-direction: column;
+  align-content: center;
+  align-items: center;
+  justify-content: center;
+  justify-items: center;
+}
+
+.book-add-form {
+  background-color:whitesmoke;
+}

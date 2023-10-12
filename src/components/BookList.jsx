@@ -1,7 +1,8 @@
 import { useContext, useEffect, useState } from "react";
 import AuthContext from "../auth/AuthContext";
 import { getList, updateList } from "../books";
-import { Alert, Button, Form, Row } from "react-bootstrap";
+import { Alert, Button, Col, Container, Form, OverlayTrigger, Row, Tooltip } from "react-bootstrap";
+import { Link } from "react-router-dom";
 
 
 const BookList = (props) => {
@@ -35,10 +36,10 @@ const BookList = (props) => {
     setInfoMsg("Book added to the list");
   }
 
-  const handleDelete = async (key) => {
+  const handleDelete = async (id) => {
     const newlist = [];
     books.map((b, i) => {
-      if (key !== i)
+      if (id !== i)
         newlist.push(b);
       return null;
     });
@@ -52,14 +53,12 @@ const BookList = (props) => {
     {infoMsg && <Alert key={"success"} variant="success" onClose={() => setInfoMsg("")} dismissible> {infoMsg} </Alert>}
     
     <h2>{props.listName}</h2>
-    {books.map((b, i) => 
-      <Row key={i}>
-        <p>title: {b.title}, author: {b.author}</p>
-        <Button onClick={() => handleDelete(i)}>Delete</Button>
-      </Row>
-      )}
-    
-    <AddBookForm handleAdd={handleAdd}/>
+    <Container className="col-md-8 justify-content-left">
+      {books.map((b, i) => <BookRow key={i} id={i} book={b} handleDelete={handleDelete}/>)}
+      <Container className="book-add-form my-3 py-3 px-5 border rounded">
+        <AddBookForm handleAdd={handleAdd}/>
+      </Container>
+    </Container>
 
   </>;
 };
@@ -99,12 +98,58 @@ const AddBookForm = (props) => {
           }}
         />
       </Form.Group>
-      <div className="d-grid gap-2">
-        <Button className="mb-3 mt-3" variant="primary" type="submit">
-          Add
-        </Button>
-      </div>
+      {/* <div className="d-grid gap-2"> */}
+        <Row>
+          <Col xs={4}></Col>
+          <Button as={Col} xs={4} className="mb-3 mt-3" variant="success" type="submit">
+            Add
+          </Button>
+        </Row>
+      {/* </div> */}
     </Form>}
+  </>;
+}
+
+const BookRow = (props) => {
+  const tooltip = (sentence) => {
+    return (
+    <Tooltip id="tooltip">
+      {sentence}
+    </Tooltip>
+    );
+  };
+
+  return <>
+    <Row className="book-row my-3 py-3 ps-5 pe-5 border rounded">
+      <Col xs={4}>{props.book.title}</Col>
+      <Col xs={4}>{props.book.author}</Col>
+      <Col xs={1} className="book-row-btn pl-1">
+        <OverlayTrigger placement="top" overlay={tooltip("Mark as read")}>
+          <Button aria-label="Mark as read" variant="success" onClick={() => {}}>
+            <i className="bi bi-check-lg"></i>
+          </Button>
+        </OverlayTrigger>
+      </Col>
+      <Col xs={1} className="book-row-btn pl-1">
+        <OverlayTrigger placement="top" overlay={tooltip("Edit book")}>
+          <Button aria-label="Edit book" onClick={() => {}}>
+            <i className="bi bi-pencil-fill"></i>
+          </Button>
+        </OverlayTrigger>
+      </Col>
+      <Col xs={1} aria-label="Remove from list" className="book-row-btn pl-1">
+        <OverlayTrigger placement="top" overlay={tooltip("Remove from list")}>
+          <Button variant="danger" onClick={() => props.handleDelete(props.id)}>
+            <i className="bi bi-trash3"></i>
+          </Button>
+        </OverlayTrigger>
+      </Col>
+      <Col className="book-row-btn">
+        <Button variant="outline">
+          <i className="bi bi-three-dots-vertical"></i>
+        </Button>
+      </Col>
+    </Row>
   </>;
 }
 

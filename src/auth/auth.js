@@ -16,7 +16,6 @@ const signUp = async (email, password) => {
       email,
       password
     );
-    console.log(userCredential);
     const user = userCredential.user;
     await addDoc(collection(db, "users"), {
       uid: user.uid,
@@ -36,7 +35,6 @@ const login = async (email, password) => {
       password
     );
     const user = userCredential.user;
-    console.log(user);
     return true;
   } catch (error) {
     return { error: error.message };
