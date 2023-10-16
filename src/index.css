@@ -57,3 +57,7 @@ code {
 .book-add-form {
   background-color:whitesmoke;
 }
+
+#dropdown-more::after { 
+  content: none; 
+} 
