@@ -157,13 +157,15 @@ const BookRow = (props) => {
           </OverlayTrigger>
         </Col>}
 
-      <Col xs={1} className="book-row-btn pl-1">
+      {/* at the moment the edit function has been moved into the dropdown */}
+      {/* <Col xs={1} className="book-row-btn pl-1">
         <OverlayTrigger placement="top" overlay={tooltip("Edit book")}>
           <Button aria-label="Edit book" onClick={() => {}}>
             <i className="bi bi-pencil-fill"></i>
           </Button>
         </OverlayTrigger>
-      </Col>
+      </Col> */}
+
       <Col xs={1} aria-label="Remove from list" className="book-row-btn pl-1">
         <OverlayTrigger placement="top" overlay={tooltip("Remove from list")}>
           <Button variant="danger" onClick={() => props.handleDelete(props.id)}>
@@ -184,6 +186,7 @@ const BookRow = (props) => {
             <Dropdown.Item onClick={() => { moveToList("reading_books") }}>Mark as reading</Dropdown.Item>}
             {props.list !== "To read" &&
             <Dropdown.Item onClick={() => { moveToList("toread_books") }}>Mark as to read</Dropdown.Item>}
+            <Dropdown.Item onClick={() => {  }}>Edit book</Dropdown.Item>
           </Dropdown.Menu>
         </Dropdown>
       </Col>
