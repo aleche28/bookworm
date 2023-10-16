@@ -24,6 +24,9 @@ const BookList = (props) => {
       } catch(err) {
         setErrMsg(err.message);
       }
+    } else {
+      setBooks([]);
+      setErrMsg("Please login to see this page.");
     }
   }
 
@@ -56,17 +59,19 @@ const BookList = (props) => {
     {errMsg && <Alert key={"danger"} variant="danger" onClose={() => setErrMsg("")} dismissible> {errMsg} </Alert>}
     {infoMsg && <Alert key={"success"} variant="success" onClose={() => setInfoMsg("")} dismissible> {infoMsg} </Alert>}
     
-    <h2>{props.listName}</h2>
-    <Col xs={6}>
-      {books.map((b, i) => <BookRow key={i} id={i} book={b} handleDelete={handleDelete}/>)}
-      {addBook ?
-        <Container className="book-add-form my-3 py-3 px-5 border rounded">
-          <AddBookForm handleAdd={handleAdd} setAddBook={setAddBook}/>
-        </Container>
-        :
-        <Button variant="success" onClick={() => setAddBook(true)}><i className="bi bi-plus"></i></Button>}
-    </Col>
-
+    {user &&
+    <>
+      <h2>{props.listName}</h2>
+      <Col xs={6}>
+        {books.map((b, i) => <BookRow key={i} id={i} book={b} handleDelete={handleDelete}/>)}
+        {addBook ?
+          <Container className="book-add-form my-3 py-3 px-5 border rounded">
+            <AddBookForm handleAdd={handleAdd} setAddBook={setAddBook}/>
+          </Container>
+          :
+          <Button variant="success" onClick={() => setAddBook(true)}><i className="bi bi-plus"></i></Button>}
+      </Col>
+    </>}
   </>;
 };
 
