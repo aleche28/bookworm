@@ -64,7 +64,7 @@ const BookRow = (props) => {
             <Dropdown.Item onClick={() => { moveToList("reading_books") }}>Mark as reading</Dropdown.Item>}
             {props.list !== "To read" &&
             <Dropdown.Item onClick={() => { moveToList("toread_books") }}>Mark as to read</Dropdown.Item>}
-            <Dropdown.Item onClick={() => {  }}>Edit book</Dropdown.Item>
+            <Dropdown.Item onClick={props.toggleEditBook}>Edit book</Dropdown.Item>
           </Dropdown.Menu>
         </Dropdown>
       </Col>

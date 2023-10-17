@@ -2,16 +2,18 @@ import { useState } from "react";
 import { Button, Col, Form, Row } from "react-bootstrap";
 
 const AddEditForm = (props) => {
-  const [title, setTitle] = useState("");
-  const [author, setAuthor] = useState("");
+  const [title, setTitle] = useState(props.book?.title || "");
+  const [author, setAuthor] = useState(props.book?.author || "");
   
-  const handleAdd = (event) => {
+  const handleSave = (event) => {
     event.preventDefault();
-    props.handleAdd(title, author);
+    props.edit ? 
+      props.handleUpdate({title, author}) :
+      props.handleAdd(title, author);
   }
 
   return <>
-    {<Form onSubmit={handleAdd}>
+    {<Form onSubmit={handleSave}>
       <Form.Group className="mb-3 mt-3" controlId="formGroupTitle">
         <Form.Label>Title</Form.Label>
         <Form.Control
@@ -39,10 +41,10 @@ const AddEditForm = (props) => {
         <Row>
           <Col xs={2}></Col>
           <Button className="col-3 mb-3 mt-3" variant="success" type="submit">
-            Add
+            Save
           </Button>
           <Col xs={2}></Col>
-          <Button className="col-3 mb-3 mt-3" variant="secondary" onClick={() => props.setAddBook(false)}>
+          <Button className="col-3 mb-3 mt-3" variant="secondary" onClick={() => props.edit ? props.cancelEditBook() : props.setAddBook(false)}>
             Cancel
           </Button>
         </Row>
