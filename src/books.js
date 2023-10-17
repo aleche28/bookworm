@@ -11,7 +11,6 @@ async function getList(uid, type) {
 
   if (docSnap.exists()) {
     const list = [];
-    // console.log("Document data:", docSnap.data());
     docSnap.data().list.forEach(b => list.push(b));
     return list;
   } else {
