@@ -60,4 +60,14 @@ code {
 
 #dropdown-more::after { 
   content: none; 
-} 
+}
+
+.favorite-heart-empty:hover {
+  cursor: pointer;
+  fill: green;
+}
+
+.favorite-heart-fill:hover {
+  cursor: pointer;
+  fill: grey;
+}

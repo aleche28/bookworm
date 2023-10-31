@@ -58,7 +58,7 @@ const BookList = (props) => {
     setInfoMsg("Book removed from the list");
   }
 
-  const handleUpdate = async (id, book) => {
+  const handleUpdate = async (id, book, showMsg = true) => {
     // temp implementation: old book is deleted and new book is added
     const newlist = [];
     books.map((b, i) => {
@@ -72,7 +72,8 @@ const BookList = (props) => {
     setEditIndex(-1);
     await updateList(user.uid, props.listType, newlist);
     fetchBooks();
-    setInfoMsg("Book updated!");
+    if (showMsg)
+      setInfoMsg("Book updated!");
   }
 
   return <>
@@ -89,7 +90,15 @@ const BookList = (props) => {
               <AddEditForm edit={true} handleAdd={handleAdd} handleUpdate={(book) => handleUpdate(i, book)} cancelEditBook={() => { setEditBook(false); setEditIndex(-1); }} book={b} />
             </Container>
           else
-            return <BookRow key={i} id={i} book={b} handleDelete={handleDelete} list={props.listName} toggleEditBook={() => { setEditIndex(i); setAddBook(false); setEditBook(true); } } />})}
+            return <BookRow key={i} id={i} book={b} list={props.listName} 
+              handleDelete={handleDelete}
+              handleUpdate={(book) => handleUpdate(i, book, false)}
+              toggleEditBook={() => { 
+                setEditIndex(i);
+                setAddBook(false);
+                setEditBook(true); 
+              }}
+            />})}
 
         {addBook ?
           <Container className="book-add-form my-3 py-3 px-5 border rounded">
