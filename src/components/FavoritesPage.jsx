@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from "react";
 import AuthContext from "../auth/AuthContext";
 import { Alert, Col } from "react-bootstrap";
 import BookRow from "./BookRow";
-import { getFavorites } from "../books";
+import { getFavorites, getList, updateList } from "../books";
 
 function FavoritesPage(props) {
   const { user } = useContext(AuthContext);
@@ -31,6 +31,18 @@ function FavoritesPage(props) {
     // eslint-disable-next-line
   }, [user]);
 
+  async function handleUpdate(book) {
+    const list = await getList(user.uid, book.list); // list from where the book is located (to read, read, reading)
+    const newlist = [];
+    list.map((b) => {
+      if (b.id !== book.id) newlist.push(b);
+      else newlist.push(book);
+      return null;
+    });
+    await updateList(user.uid, book.list, newlist);
+    fetchBooks();
+  }
+
   return (
     <>
       {errMsg && (
@@ -57,6 +69,7 @@ function FavoritesPage(props) {
       {user && (
         <>
           <h2>Favorites</h2>
+          {books.length > 0 ?
           <Col xs={6}>
             {books.map((b, i) => (
               <BookRow
@@ -65,9 +78,12 @@ function FavoritesPage(props) {
                 book={b}
                 favoritesPage={true}
                 setErrMsg={setErrMsg}
+                handleUpdate={handleUpdate}
               />
             ))}
           </Col>
+          :
+          <span>You don't have any favorite book yet.</span>}
         </>
       )}
     </>

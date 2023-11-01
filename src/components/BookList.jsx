@@ -5,6 +5,7 @@ import { Alert, Button, Col, Container } from "react-bootstrap";
 import { useLocation } from "react-router-dom";
 import AddEditForm from "./AddEditForm";
 import BookRow from "./BookRow";
+import { v4 as uuidv4 } from "uuid";
 
 const BookList = (props) => {
   const { user } = useContext(AuthContext);
@@ -39,17 +40,18 @@ const BookList = (props) => {
   }, [user, location]);
 
   const handleAdd = async (title, author) => {
-    const book = { title: title, author: author };
+    const book = { id: uuidv4(), title: title, author: author };
     await updateList(user.uid, props.listType, [...books, book]);
     setAddBook(false);
     fetchBooks();
     setInfoMsg("Book added to the list");
   };
 
-  const handleDelete = async (id) => {
+  // TO-DO: Update this to delete based on book uuid and not based on book position
+  const handleDelete = async (index) => {
     const newlist = [];
     books.map((b, i) => {
-      if (id !== i) newlist.push(b);
+      if (index !== i) newlist.push(b);
       return null;
     });
     await updateList(user.uid, props.listType, newlist);

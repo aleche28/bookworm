@@ -1,6 +1,6 @@
 import { useContext } from "react";
 import AuthContext from "../auth/AuthContext";
-import { getList, updateList } from "../books";
+import { getList, listTypes, updateList } from "../books";
 import {
   Button,
   Col,
@@ -25,11 +25,7 @@ const BookRow = (props) => {
   };
 
   const updateFavorite = async (book) => {
-    if (props.favoritesPage) {
-      props.setErrMsg("Functionality not implemented yet");
-    } else {
-      props.handleUpdate(book);
-    }
+    props.handleUpdate(book);
   };
 
   return (
@@ -46,7 +42,7 @@ const BookRow = (props) => {
           </Button>
         </OverlayTrigger>
       </Col> */}
-        {props.favoritesPage && <Col>{props.book.list}</Col>}
+        {props.favoritesPage && <Col>{listTypes[props.book.list]}</Col>}
 
         <Col
           xs={1}

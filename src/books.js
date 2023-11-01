@@ -46,7 +46,7 @@ async function getFavorites(uid) {
 
     if (docSnap.exists()) {
       docSnap.data().list.forEach((b) => {
-        if (b.favorite) list.push({ ...b, list: listTypes[type] });
+        if (b.favorite) list.push({ ...b, list: type });
       });
     }
   }
