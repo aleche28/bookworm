@@ -20,9 +20,9 @@ const Signup = () => {
       const form = e.currentTarget;
       const isValid = form.checkValidity();
       setValidated(true);
-  
+
       if (!isValid) return;
-  
+
       setErrMsg("");
       const res = await signUp(email, password);
       if (res.error) setErrMsg(res.error);
@@ -36,7 +36,11 @@ const Signup = () => {
         <Row>
           <h1>Sign up</h1>
         </Row>
-        {errMsg && <Alert key={"danger"} variant={"danger"}>{errMsg}</Alert>}
+        {errMsg && (
+          <Alert key={"danger"} variant={"danger"}>
+            {errMsg}
+          </Alert>
+        )}
         <Form noValidate validated={validated} onSubmit={handleSubmit}>
           <Form.Group className="mb-3 mt-3" controlId="formGroupUsername">
             <Form.Label>Email</Form.Label>

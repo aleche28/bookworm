@@ -1,7 +1,11 @@
 import { db } from "./firebase";
 import { doc, getDoc, setDoc } from "firebase/firestore";
 
-const listTypes = {"read_books": "Read", "toread_books": "To read", "reading_books": "Reading"};
+const listTypes = {
+  read_books: "Read",
+  toread_books: "To read",
+  reading_books: "Reading",
+};
 
 async function getList(uid, type) {
   if (!(type in listTypes)) {
@@ -13,7 +17,7 @@ async function getList(uid, type) {
 
   if (docSnap.exists()) {
     const list = [];
-    docSnap.data().list.forEach(b => list.push(b));
+    docSnap.data().list.forEach((b) => list.push(b));
     return list;
   } else {
     // docSnap.data() will be undefined in this case
@@ -41,8 +45,8 @@ async function getFavorites(uid) {
     const docSnap = await getDoc(docRef);
 
     if (docSnap.exists()) {
-      docSnap.data().list.forEach(b => {
-        if (b.favorite) list.push({...b, list: listTypes[type]})
+      docSnap.data().list.forEach((b) => {
+        if (b.favorite) list.push({ ...b, list: listTypes[type] });
       });
     }
   }

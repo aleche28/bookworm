@@ -29,12 +29,9 @@ const signUp = async (email, password) => {
 
 const login = async (email, password) => {
   try {
-    const userCredential = await signInWithEmailAndPassword(
-      auth,
-      email,
-      password
-    );
-    const user = userCredential.user;
+    /* const userCredential =  */
+    await signInWithEmailAndPassword(auth, email, password);
+    // const user = userCredential.user;
     return true;
   } catch (error) {
     return { error: error.message };
