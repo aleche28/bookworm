@@ -70,7 +70,7 @@ function FavoritesPage(props) {
         <>
           <h2>Favorites</h2>
           {books.length > 0 ?
-          <Col xs={6}>
+          <Col xs={10} lg={8}>
             {books.map((b, i) => (
               <BookRow
                 key={i}

@@ -100,7 +100,7 @@ const BookList = (props) => {
       {user && (
         <>
           <h2>{listTypes[props.listType]}</h2>
-          <Col xs={6}>
+          <Col lg={10}>
             {books.map((b, i) => {
               if (editBook && editIndex === i)
                 return (
