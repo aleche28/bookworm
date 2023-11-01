@@ -11,6 +11,7 @@ import 'bootstrap-icons/font/bootstrap-icons.css';
 import { getList } from "./books";
 import BookList from "./components/BookList";
 import { Button, Container, Nav, Navbar, Row } from "react-bootstrap";
+import FavoritesPage from "./components/FavoritesPage";
 
 function App() {
   return (
@@ -22,6 +23,7 @@ function App() {
             <Route path="toread" element={<BookList listType="toread_books" listName="To read" />} />
             <Route path="read" element={<BookList listType="read_books" listName="Read" />} />
             <Route path="reading" element={<BookList listType="reading_books" listName="Reading" />} />
+            <Route path="favorites" element={<FavoritesPage />} />
             <Route path="login" element={<LoginForm />} />
             <Route path="signup" element={<Signup />} />
           </Route>
@@ -55,6 +57,7 @@ function MainLayout() {
                   <Nav.Link as={Link} to={"/toread"}>To read</Nav.Link>
                   <Nav.Link as={Link} to={"/reading"}>Reading</Nav.Link>
                   <Nav.Link as={Link} to={"/read"}>Read</Nav.Link>
+                  <Nav.Link as={Link} to={"/favorites"}>Favorites</Nav.Link>
                 </Nav>
                 <Navbar.Text className="m-0 p-0">
                 {user ? (

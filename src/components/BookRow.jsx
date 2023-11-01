@@ -21,6 +21,14 @@ const BookRow = (props) => {
     props.handleDelete(props.id);
   }
 
+  const updateFavorite = async (book) => {
+    if (props.favoritesPage) {
+      props.setErrMsg("Functionality not implemented yet");
+    } else {
+      props.handleUpdate(book);
+    }
+  }
+
   return <>
     <Row className="book-row my-3 py-3 ps-5 pe-5 border rounded">
       <Col xs={4}>{props.book.title}</Col>
@@ -34,24 +42,27 @@ const BookRow = (props) => {
           </Button>
         </OverlayTrigger>
       </Col> */}
+      {props.favoritesPage &&
+        <Col>{props.book.list}</Col>}
+
       <Col xs={1} aria-label={props.book.favorite ? "Remove from favorites" : "Add to favorites"}
         className="book-row-btn pl-1">
         <OverlayTrigger placement="top"
           overlay={tooltip(props.book.favorite ? "Remove from favorites" : "Add to favorites")}>
           {props.book.favorite ?
-            <svg className="favorite-heart-fill" onClick={() => props.handleUpdate({...props.book, favorite: false})}
+            <svg className="favorite-heart-fill" onClick={() => updateFavorite({...props.book, favorite: false})}
               xmlns="http://www.w3.org/2000/svg" fill="green" height="32" width="32" viewBox="0 -960 960 960" >
               <path d="m480-121-41-37q-106-97-175-167.5t-110-126Q113-507 96.5-552T80-643q0-90 60.5-150.5T290-854q57 0 105.5 27t84.5 78q42-54 89-79.5T670-854q89 0 149.5 60.5T880-643q0 46-16.5 91T806-451.5q-41 55.5-110 126T521-158l-41 37Z"/>
             </svg>
             :
-            <svg className="favorite-heart-empty" onClick={() => props.handleUpdate({...props.book, favorite: true})}
+            <svg className="favorite-heart-empty" onClick={() => updateFavorite({...props.book, favorite: true})}
               xmlns="http://www.w3.org/2000/svg" fill="grey" height="32" width="32" viewBox="0 -960 960 960" >
               <path d="m480-121-41-37q-105.768-97.121-174.884-167.561Q195-396 154-451.5T96.5-552Q80-597 80-643q0-90.155 60.5-150.577Q201-854 290-854q57 0 105.5 27t84.5 78q42-54 89-79.5T670-854q89 0 149.5 60.423Q880-733.155 880-643q0 46-16.5 91T806-451.5Q765-396 695.884-325.561 626.768-255.121 521-158l-41 37Zm0-79q101.236-92.995 166.618-159.498Q712-426 750.5-476t54-89.135q15.5-39.136 15.5-77.72Q820-709 778-751.5T670.225-794q-51.524 0-95.375 31.5Q531-731 504-674h-49q-26-56-69.85-88-43.851-32-95.375-32Q224-794 182-751.5t-42 108.816Q140-604 155.5-564.5t54 90Q248-424 314-358t166 158Zm0-297Z"/>
             </svg>}
         </OverlayTrigger>
       </Col>
 
-      {props.list !== "Read" &&
+      {!props.favoritesPage && props.list !== "read_books" &&
         <Col xs={1} className="book-row-btn pl-1">
           <OverlayTrigger placement="top" overlay={tooltip("Mark as read")}>
             <Button aria-label="Mark as read" variant="success" onClick={() => { moveToList("read_books") }}>
@@ -60,30 +71,33 @@ const BookRow = (props) => {
           </OverlayTrigger>
         </Col>}
 
-      <Col xs={1} aria-label="Remove from list" className="book-row-btn pl-1">
-        <OverlayTrigger placement="top" overlay={tooltip("Remove from list")}>
-          <Button variant="danger" onClick={() => props.handleDelete(props.id)}>
-            <i className="bi bi-trash3"></i>
-          </Button>
-        </OverlayTrigger>
-      </Col>
-      <Col xs={1} className="book-row-btn">
-        <Dropdown>
-          <Dropdown.Toggle variant="outline" id="dropdown-more">
-            <i className="bi bi-three-dots-vertical"></i>
-          </Dropdown.Toggle>
+      {!props.favoritesPage &&
+        <>
+          <Col xs={1} aria-label="Remove from list" className="book-row-btn pl-1">
+            <OverlayTrigger placement="top" overlay={tooltip("Remove from list")}>
+              <Button variant="danger" onClick={() => props.handleDelete(props.id)}>
+                <i className="bi bi-trash3"></i>
+              </Button>
+            </OverlayTrigger>
+          </Col>
+          <Col xs={1} className="book-row-btn">
+            <Dropdown>
+              <Dropdown.Toggle variant="outline" id="dropdown-more">
+                <i className="bi bi-three-dots-vertical"></i>
+              </Dropdown.Toggle>
 
-          <Dropdown.Menu>
-            {/* {props.list !== "Read" &&
-              <Dropdown.Item onClick={() => {}}>Mark as read</Dropdown.Item>} */}
-            {props.list !== "Reading" &&
-            <Dropdown.Item onClick={() => { moveToList("reading_books") }}>Mark as reading</Dropdown.Item>}
-            {props.list !== "To read" &&
-            <Dropdown.Item onClick={() => { moveToList("toread_books") }}>Mark as to read</Dropdown.Item>}
-            <Dropdown.Item onClick={props.toggleEditBook}>Edit book</Dropdown.Item>
-          </Dropdown.Menu>
-        </Dropdown>
-      </Col>
+              <Dropdown.Menu>
+                {/* {props.list !== "read_books" &&
+                  <Dropdown.Item onClick={() => {}}>Mark as read</Dropdown.Item>} */}
+                {props.list !== "reading_books" &&
+                <Dropdown.Item onClick={() => { moveToList("reading_books") }}>Mark as reading</Dropdown.Item>}
+                {props.list !== "toread_books" &&
+                <Dropdown.Item onClick={() => { moveToList("toread_books") }}>Mark as to read</Dropdown.Item>}
+                <Dropdown.Item onClick={props.toggleEditBook}>Edit book</Dropdown.Item>
+              </Dropdown.Menu>
+            </Dropdown>
+          </Col>
+        </>}
     </Row>
   </>;
 }

@@ -1,8 +1,10 @@
 import { db } from "./firebase";
 import { doc, getDoc, setDoc } from "firebase/firestore";
 
+const listTypes = {"read_books": "Read", "toread_books": "To read", "reading_books": "Reading"};
+
 async function getList(uid, type) {
-  if (type !== "read_books" && type !== "toread_books" && type !== "reading_books") {
+  if (!(type in listTypes)) {
     throw new Error("This type of list does not exist.");
   }
 
@@ -21,7 +23,7 @@ async function getList(uid, type) {
 }
 
 async function updateList(uid, type, newList) {
-  if (type !== "read_books" && type !== "toread_books" && type !== "reading_books") {
+  if (!(type in listTypes)) {
     throw new Error("This type of list does not exist.");
   }
 
@@ -29,4 +31,22 @@ async function updateList(uid, type, newList) {
   await setDoc(docRef, { list: newList }, { merge: true });
 }
 
-export { getList, updateList };
+async function getFavorites(uid) {
+  /* firebase doesn't support query on multiple collections,
+  so three reads are necessary: one for each book list */
+  const list = [];
+  for (const type in listTypes) {
+    if (!type) continue;
+    const docRef = doc(db, type, uid);
+    const docSnap = await getDoc(docRef);
+
+    if (docSnap.exists()) {
+      docSnap.data().list.forEach(b => {
+        if (b.favorite) list.push({...b, list: listTypes[type]})
+      });
+    }
+  }
+  return list;
+}
+
+export { getList, updateList, getFavorites, listTypes };

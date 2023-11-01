@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState } from "react";
 import AuthContext from "../auth/AuthContext";
-import { getList, updateList } from "../books";
+import { getList, listTypes, updateList } from "../books";
 import { Alert, Button, Col, Container } from "react-bootstrap";
 import { useLocation } from "react-router-dom";
 import AddEditForm from "./AddEditForm";
@@ -82,7 +82,7 @@ const BookList = (props) => {
     
     {user &&
     <>
-      <h2>{props.listName}</h2>
+      <h2>{listTypes[props.listType]}</h2>
       <Col xs={6}>
         {books.map((b, i) => {
           if (editBook && editIndex === i)
@@ -90,7 +90,7 @@ const BookList = (props) => {
               <AddEditForm edit={true} handleAdd={handleAdd} handleUpdate={(book) => handleUpdate(i, book)} cancelEditBook={() => { setEditBook(false); setEditIndex(-1); }} book={b} />
             </Container>
           else
-            return <BookRow key={i} id={i} book={b} list={props.listName} 
+            return <BookRow key={i} id={i} book={b} list={props.listType} 
               handleDelete={handleDelete}
               handleUpdate={(book) => handleUpdate(i, book, false)}
               toggleEditBook={() => { 
