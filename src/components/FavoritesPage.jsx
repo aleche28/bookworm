@@ -1,28 +1,36 @@
 import React, { useContext, useEffect, useState } from "react";
 import AuthContext from "../auth/AuthContext";
-import { Alert, Col } from "react-bootstrap";
+import { Alert, Col, Container, Spinner } from "react-bootstrap";
 import BookRow from "./BookRow";
 import { getFavorites, getList, updateList } from "../books";
+import { useNavigate } from "react-router-dom";
 
 function FavoritesPage(props) {
   const { user } = useContext(AuthContext);
 
+  const [loading, setLoading] = useState(true);
   const [errMsg, setErrMsg] = useState("");
   const [infoMsg, setInfoMsg] = useState("");
   const [books, setBooks] = useState([]);
 
+  const navigate = useNavigate();
+
   async function fetchBooks() {
-    if (user) {
+    setLoading(true);
+    if (!user) {
+      setBooks([]);
+    } else if (!user.uid) {
+      navigate("/login");
+    } else {
       try {
         const list = await getFavorites(user.uid);
         setErrMsg("");
         setBooks(list);
       } catch (err) {
         setErrMsg(err.message);
+      } finally {
+        setLoading(false);
       }
-    } else {
-      setBooks([]);
-      setErrMsg("Please login to see this page.");
     }
   }
 
@@ -66,24 +74,35 @@ function FavoritesPage(props) {
         </Alert>
       )}
 
-      {user && (
+      {user?.uid && (
         <>
           <h2>Favorites</h2>
-          {books.length > 0 ?
-          <Col xs={10} lg={8}>
-            {books.map((b, i) => (
-              <BookRow
-                key={i}
-                id={i}
-                book={b}
-                favoritesPage={true}
-                setErrMsg={setErrMsg}
-                handleUpdate={handleUpdate}
-              />
-            ))}
-          </Col>
-          :
-          <span>You don't have any favorite book yet.</span>}
+          {loading ? (
+            <Container className="d-flex my-5 justify-content-left">
+              <Spinner animation="border" role="status">
+                <span className="visually-hidden">Loading...</span>
+              </Spinner>
+            </Container>
+          ) : (
+            <>
+              {books.length > 0 ? (
+                <Col xs={10} lg={8}>
+                  {books.map((b, i) => (
+                    <BookRow
+                      key={i}
+                      id={i}
+                      book={b}
+                      favoritesPage={true}
+                      setErrMsg={setErrMsg}
+                      handleUpdate={handleUpdate}
+                    />
+                  ))}
+                </Col>
+              ) : (
+                <span>You don't have any favorite book yet.</span>
+              )}
+            </>
+          )}
         </>
       )}
     </>

@@ -10,7 +10,7 @@ export const AuthProvider = ({ children }) => {
   
   useEffect(() => {
     onAuthStateChanged(auth, (user) => {
-      setUser(user);
+      setUser(user || { uid: null });
     });
   }, []);
 

@@ -1,5 +1,12 @@
 import { useContext, useEffect, useState } from "react";
-import { BrowserRouter, Link, Outlet, Route, Routes } from "react-router-dom";
+import {
+  BrowserRouter,
+  Link,
+  Outlet,
+  Route,
+  Routes,
+  useNavigate,
+} from "react-router-dom";
 import { AuthProvider } from "./auth/AuthProvider";
 import AuthContext from "./auth/AuthContext";
 import LoginForm from "./components/LoginForm";
@@ -10,7 +17,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import { getList } from "./books";
 import BookList from "./components/BookList";
-import { Button, Container, Nav, Navbar, Row } from "react-bootstrap";
+import { Button, Container, Nav, Navbar, Row, Spinner } from "react-bootstrap";
 import FavoritesPage from "./components/FavoritesPage";
 
 function App() {
@@ -85,7 +92,7 @@ function MainLayout() {
                 </Nav.Link>
               </Nav>
               <Navbar.Text className="m-0 p-0">
-                {user ? (
+                {user?.uid ? (
                   <>
                     <i className="bi bi-person-circle"></i>{" "}
                     <span>{user.email}</span>{" "}
@@ -118,104 +125,130 @@ function MainLayout() {
 const HomePage = (props) => {
   const { user } = useContext(AuthContext);
 
+  const [loading, setLoading] = useState(true);
   const [readlist, setReadlist] = useState([]);
   const [toreadlist, setToreadlist] = useState([]);
   const [readinglist, setReadinglist] = useState([]);
 
+  const navigate = useNavigate();
+
   async function fetchReadlist() {
-    if (user) {
-      try {
-        const list = await getList(user.uid, "read_books");
-        setReadlist(list);
-      } catch (err) {
-        setReadlist([]);
-      }
-    } else {
+    try {
+      const list = await getList(user.uid, "read_books");
+      setReadlist(list);
+    } catch (err) {
       setReadlist([]);
     }
   }
 
   async function fetchReadinglist() {
-    if (user) {
-      try {
-        const list = await getList(user.uid, "reading_books");
-        setReadinglist(list);
-      } catch (err) {
-        setReadinglist([]);
-      }
-    } else {
+    try {
+      const list = await getList(user.uid, "reading_books");
+      setReadinglist(list);
+    } catch (err) {
       setReadinglist([]);
     }
   }
 
   async function fetchToreadlist() {
-    if (user) {
-      try {
-        const list = await getList(user.uid, "toread_books");
-        setToreadlist(list);
-      } catch (err) {
-        setToreadlist([]);
-      }
-    } else {
+    try {
+      const list = await getList(user.uid, "toread_books");
+      setToreadlist(list);
+    } catch (err) {
       setToreadlist([]);
     }
   }
 
   useEffect(() => {
-    fetchReadlist();
-    fetchReadinglist();
-    fetchToreadlist();
+    setLoading(true);
+    if (!user) {
+      setReadlist([]);
+      setReadinglist([]);
+      setToreadlist([]);
+    } else if (!user.uid) {
+      navigate("/login");
+    } else {
+      fetchReadlist();
+      fetchReadinglist();
+      fetchToreadlist();
+      // setTimeout(() => {
+      setLoading(false);
+      // }, 200);
+    }
     // eslint-disable-next-line
   }, [user]);
 
   return (
     <>
-      {user && (
+      {user?.uid && (
         <>
           <h1>Welcome back!</h1>
 
           <h2>Reading now</h2>
-          {readinglist.map((b, i) => (
-            <Row key={i}>
-              <p>
-                <strong>{b.title}</strong>, by {b.author}
-              </p>
-            </Row>
-          ))}
-          <Button as={Link} to={"/reading"} variant="success">
-            Add
-          </Button>
+          {loading ? (
+            <Container className="d-flex my-5 justify-content-left">
+              <Spinner animation="border" role="status">
+                <span className="visually-hidden">Loading...</span>
+              </Spinner>
+            </Container>
+          ) : (
+            <>
+              {readinglist.map((b, i) => (
+                <Row key={i}>
+                  <p>
+                    <b>{b.title}</b>, by {b.author}
+                  </p>
+                </Row>
+              ))}
+              <Button as={Link} to={"/reading"} variant="success">
+                Add
+              </Button>
+            </>
+          )}
 
           <h2>To read</h2>
-          {toreadlist.map((b, i) => (
-            <Row key={i}>
-              <p>
-                <strong>{b.title}</strong>, by {b.author}
-              </p>
-            </Row>
-          ))}
-          <Button as={Link} to={"/toread"} variant="success">
-            Add
-          </Button>
+          {loading ? (
+            <Container className="d-flex my-5 justify-content-left">
+              <Spinner animation="border" role="status">
+                <span className="visually-hidden">Loading...</span>
+              </Spinner>
+            </Container>
+          ) : (
+            <>
+              {toreadlist.map((b, i) => (
+                <Row key={i}>
+                  <p>
+                    <b>{b.title}</b>, by {b.author}
+                  </p>
+                </Row>
+              ))}
+              <Button as={Link} to={"/toread"} variant="success">
+                Add
+              </Button>
+            </>
+          )}
 
           <h2>Read</h2>
-          {readlist.map((b, i) => (
-            <Row key={i}>
-              <p>
-                <strong>{b.title}</strong>, by {b.author}
-              </p>
-            </Row>
-          ))}
-          <Button as={Link} to={"/read"} variant="success">
-            Add
-          </Button>
-        </>
-      )}
-
-      {!user && (
-        <>
-          <h1>Not Authenticated</h1>
-          <Link to="/login">Login</Link>
+          {loading ? (
+            <Container className="d-flex my-5 justify-content-left">
+              <Spinner animation="border" role="status">
+                <span className="visually-hidden">Loading...</span>
+              </Spinner>
+            </Container>
+          ) : (
+            <>
+              {readlist.map((b, i) => (
+                <Row key={i}>
+                  <p>
+                    <b>{b.title}</b>, by {b.author}
+                  </p>
+                </Row>
+              ))}
+              <Button as={Link} to={"/read"} variant="success">
+                Add
+              </Button>
+            </>
+          )}
         </>
       )}
     </>

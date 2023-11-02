@@ -1,8 +1,8 @@
 import { useContext, useEffect, useState } from "react";
 import AuthContext from "../auth/AuthContext";
 import { getList, listTypes, updateList } from "../books";
-import { Alert, Button, Col, Container } from "react-bootstrap";
-import { useLocation } from "react-router-dom";
+import { Alert, Button, Col, Container, Spinner } from "react-bootstrap";
+import { useLocation, useNavigate } from "react-router-dom";
 import AddEditForm from "./AddEditForm";
 import BookRow from "./BookRow";
 import { v4 as uuidv4 } from "uuid";
@@ -10,7 +10,9 @@ import { v4 as uuidv4 } from "uuid";
 const BookList = (props) => {
   const { user } = useContext(AuthContext);
   const location = useLocation();
+  const navigate = useNavigate();
 
+  const [loading, setLoading] = useState(true);
   const [errMsg, setErrMsg] = useState("");
   const [infoMsg, setInfoMsg] = useState("");
   const [books, setBooks] = useState([]);
@@ -20,17 +22,21 @@ const BookList = (props) => {
   const [editIndex, setEditIndex] = useState(-1);
 
   async function fetchBooks() {
-    if (user) {
+    setLoading(true);
+    if (!user) {
+      setBooks([]);
+    } else if (!user.uid) {
+      navigate("/login");
+    } else {
       try {
         const list = await getList(user.uid, props.listType);
         setErrMsg("");
         setBooks(list);
       } catch (err) {
         setErrMsg(err.message);
+      } finally {
+        setLoading(false);
       }
-    } else {
-      setBooks([]);
-      setErrMsg("Please login to see this page.");
     }
   }
 
@@ -40,7 +46,12 @@ const BookList = (props) => {
   }, [user, location]);
 
   const handleAdd = async (title, author) => {
-    const book = { id: uuidv4(), title: title, author: author, favorite: false };
+    const book = {
+      id: uuidv4(),
+      title: title,
+      author: author,
+      favorite: false,
+    };
     await updateList(user.uid, props.listType, [...books, book]);
     setAddBook(false);
     fetchBooks();
@@ -97,7 +108,17 @@ const BookList = (props) => {
         </Alert>
       )}
 
-      {user && (
+      {loading && (
+        <Col lg={10}>
+          <Container className="d-flex my-5 justify-content-center">
+            <Spinner animation="border" role="status">
+              <span className="visually-hidden">Loading...</span>
+            </Spinner>
+          </Container>
+        </Col>
+      )}
+
+      {user?.uid && !loading && (
         <>
           <h2>{listTypes[props.listType]}</h2>
           <Col lg={10}>
