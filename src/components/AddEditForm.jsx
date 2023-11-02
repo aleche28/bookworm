@@ -8,7 +8,7 @@ const AddEditForm = (props) => {
   const handleSave = (event) => {
     event.preventDefault();
     props.edit
-      ? props.handleUpdate({ title, author })
+      ? props.handleUpdate({ title, author, favorite: props.book?.favorite })
       : props.handleAdd(title, author);
   };
 
