@@ -49,7 +49,7 @@ const BookRow = (props) => {
           aria-label={
             props.book.favorite ? "Remove from favorites" : "Add to favorites"
           }
-          className="book-row-btn pl-1"
+          className="book-row-btn btn-collapse pl-1"
         >
           <OverlayTrigger
             placement="top"
@@ -90,7 +90,7 @@ const BookRow = (props) => {
         </Col>
 
         {!props.favoritesPage && props.list !== "read_books" && (
-          <Col xs={1} className="book-row-btn pl-1">
+          <Col xs={1} className="book-row-btn btn-collapse pl-1">
             <OverlayTrigger placement="top" overlay={tooltip("Mark as read")}>
               <Button
                 aria-label="Mark as read"
@@ -110,7 +110,7 @@ const BookRow = (props) => {
             <Col
               xs={1}
               aria-label="Remove from list"
-              className="book-row-btn pl-1"
+              className="book-row-btn btn-collapse pl-1"
             >
               <OverlayTrigger
                 placement="top"
@@ -153,6 +153,35 @@ const BookRow = (props) => {
                   )}
                   <Dropdown.Item onClick={props.toggleEditBook}>
                     Edit book
+                  </Dropdown.Item>
+                  {props.list !== "read_books" && (
+                    <Dropdown.Item
+                      id="toggle-entry"
+                      onClick={() => {
+                        moveToList("read_books");
+                      }}
+                    >
+                      Mark as read
+                    </Dropdown.Item>
+                  )}
+                  <Dropdown.Item
+                    id="toggle-entry"
+                    onClick={() =>
+                      updateFavorite({
+                        ...props.book,
+                        favorite: !props.book.favorite,
+                      })
+                    }
+                  >
+                    {props.book.favorite
+                      ? "Remove from favorites"
+                      : "Add to favorites"}
+                  </Dropdown.Item>
+                  <Dropdown.Item
+                    id="toggle-entry"
+                    onClick={() => props.handleDelete(props.id)}
+                  >
+                    Remove book from list
                   </Dropdown.Item>
                 </Dropdown.Menu>
               </Dropdown>

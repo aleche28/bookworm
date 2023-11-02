@@ -71,3 +71,24 @@ code {
   cursor: pointer;
   fill: grey;
 }
+
+/* Media query for mobile view */
+/* @media (max-width: 768px) {
+  .book-actions {
+    flex-direction: column;
+  }
+
+  .dropdown-button {
+    display: none;
+  }
+} */
+@media (max-width: 768px) {
+  .btn-collapse {
+    display: none;
+  }
+}
+@media (min-width: 769px) {
+  #toggle-entry {
+    display: none;
+  }
+}
