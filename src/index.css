@@ -110,3 +110,18 @@ code {
 #toggle-password:hover {
   cursor: pointer;
 }
+
+.divider {
+  font-size: small;
+  display: flex;
+  align-items: center;
+  margin: 1rem; /* top and bottom */
+}
+
+.divider::before, .divider::after {
+  flex: 1;
+  content: '';
+  padding: 0.1px;
+  background-color: grey;
+  margin: 5px;
+}

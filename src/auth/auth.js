@@ -3,11 +3,14 @@ import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   signOut,
+  signInWithPopup,
+  GoogleAuthProvider,
 } from "firebase/auth";
 import { addDoc, collection } from "firebase/firestore";
 import { app, db } from "../firebase";
 
 const auth = getAuth(app);
+const provider = new GoogleAuthProvider();
 
 const signUp = async (email, password) => {
   try {
@@ -29,9 +32,18 @@ const signUp = async (email, password) => {
 
 const login = async (email, password) => {
   try {
-    /* const userCredential =  */
     await signInWithEmailAndPassword(auth, email, password);
-    // const user = userCredential.user;
+    return true;
+  } catch (error) {
+    return { error: error.message };
+  }
+};
+
+/* DOC: https://firebase.google.com/docs/auth/web/google-signin?authuser=0 */
+const googleLogin = async () => {
+  try {
+    // TO-DO: change this to signInWithRedirect
+    await signInWithPopup(auth, provider);
     return true;
   } catch (error) {
     return { error: error.message };
@@ -47,4 +59,4 @@ const logout = async () => {
   }
 };
 
-export { signUp, login, logout };
+export { signUp, login, googleLogin, logout };

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { login } from "../auth/auth";
+import { googleLogin, login } from "../auth/auth";
 import { Alert, Button, Container, Form, Row } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
 
@@ -22,6 +22,12 @@ const LoginForm = () => {
 
     setErrMsg("");
     const res = await login(email, password);
+    if (res.error) setErrMsg(res.error);
+    else navigate("/");
+  };
+
+  const handleGoogleLogin = async () => {
+    const res = await googleLogin();
     if (res.error) setErrMsg(res.error);
     else navigate("/");
   };
@@ -77,9 +83,9 @@ const LoginForm = () => {
               Please enter a password.
             </Form.Control.Feedback>
           </Form.Group>
-            
+
           <div className="d-grid gap-2">
-            <Button className="mb-3 mt-3" variant="primary" type="submit">
+            <Button className="mb-3 mt-0" variant="primary" type="submit">
               Login
             </Button>
           </div>
@@ -87,6 +93,12 @@ const LoginForm = () => {
             <small>
               Not registered yet? <Link to={"/signup"}>Sign up now</Link>
             </small>
+          </div>
+          <div className="divider">OR</div>
+          <div className="d-grid gap-2">
+            <Button variant="outline-secondary" onClick={handleGoogleLogin}>
+              <i className="bi bi-google" /> <span>Sign in with Google</span>
+            </Button>
           </div>
         </Form>
       </Container>
