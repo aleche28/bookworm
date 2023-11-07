@@ -131,8 +131,6 @@ const BookRow = (props) => {
                 </Dropdown.Toggle>
 
                 <Dropdown.Menu>
-                  {/* {props.list !== "read_books" &&
-                  <Dropdown.Item onClick={() => {}}>Mark as read</Dropdown.Item>} */}
                   {props.list !== "reading_books" && (
                     <Dropdown.Item
                       onClick={() => {

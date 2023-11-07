@@ -1,12 +1,5 @@
-import { useContext, useEffect, useState } from "react";
-import {
-  BrowserRouter,
-  Link,
-  Outlet,
-  Route,
-  Routes,
-  useNavigate,
-} from "react-router-dom";
+import { useContext } from "react";
+import { BrowserRouter, Link, Outlet, Route, Routes } from "react-router-dom";
 import { AuthProvider } from "./auth/AuthProvider";
 import AuthContext from "./auth/AuthContext";
 import LoginForm from "./components/LoginForm";
@@ -15,11 +8,10 @@ import { logout } from "./auth/auth";
 
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
-import { getList } from "./books";
 import BookList from "./components/BookList";
-import { Button, Container, Nav, Navbar, Spinner } from "react-bootstrap";
+import { Container, Nav, Navbar } from "react-bootstrap";
 import FavoritesPage from "./components/FavoritesPage";
-import BookCard from "./components/BookCard";
+import HomePage from "./components/HomePage";
 
 function App() {
   return (
@@ -122,132 +114,5 @@ function MainLayout() {
     </>
   );
 }
-
-const HomePage = (props) => {
-  const { user } = useContext(AuthContext);
-
-  const [loading, setLoading] = useState(true);
-  const [readlist, setReadlist] = useState([]);
-  const [toreadlist, setToreadlist] = useState([]);
-  const [readinglist, setReadinglist] = useState([]);
-
-  const navigate = useNavigate();
-
-  async function fetchReadlist() {
-    try {
-      const list = await getList(user.uid, "read_books");
-      setReadlist(list);
-    } catch (err) {
-      setReadlist([]);
-    }
-  }
-
-  async function fetchReadinglist() {
-    try {
-      const list = await getList(user.uid, "reading_books");
-      setReadinglist(list);
-    } catch (err) {
-      setReadinglist([]);
-    }
-  }
-
-  async function fetchToreadlist() {
-    try {
-      const list = await getList(user.uid, "toread_books");
-      setToreadlist(list);
-    } catch (err) {
-      setToreadlist([]);
-    }
-  }
-
-  useEffect(() => {
-    setLoading(true);
-    if (!user) {
-      setReadlist([]);
-      setReadinglist([]);
-      setToreadlist([]);
-    } else if (!user.uid) {
-      navigate("/login");
-    } else {
-      fetchReadlist();
-      fetchReadinglist();
-      fetchToreadlist();
-      // setTimeout(() => {
-      setLoading(false);
-      // }, 200);
-    }
-    // eslint-disable-next-line
-  }, [user]);
-
-  return (
-    <>
-      {user?.uid && (
-        <>
-          <h1>Welcome back!</h1>
-
-          <h2>Reading now</h2>
-          {loading ? (
-            <Container className="d-flex my-5 justify-content-left">
-              <Spinner animation="border" role="status">
-                <span className="visually-hidden">Loading...</span>
-              </Spinner>
-            </Container>
-          ) : (
-            <>
-              <div className="book-cards-row">
-                {readinglist.map((b, i) => (
-                  <BookCard key={i} book={b} />
-                ))}
-                <Button as={Link} to={"/reading"} variant="success">
-                  +
-                </Button>
-              </div>
-            </>
-          )}
-
-          <h2>To read</h2>
-          {loading ? (
-            <Container className="d-flex my-5 justify-content-left">
-              <Spinner animation="border" role="status">
-                <span className="visually-hidden">Loading...</span>
-              </Spinner>
-            </Container>
-          ) : (
-            <>
-              <div className="book-cards-row">
-                {toreadlist.map((b, i) => (
-                  <BookCard key={i} book={b} />
-                ))}
-                <Button as={Link} to={"/toread"} variant="success">
-                  +
-                </Button>
-              </div>
-            </>
-          )}
-
-          <h2>Read</h2>
-          {loading ? (
-            <Container className="d-flex my-5 justify-content-left">
-              <Spinner animation="border" role="status">
-                <span className="visually-hidden">Loading...</span>
-              </Spinner>
-            </Container>
-          ) : (
-            <>
-              <div className="book-cards-row">
-                {readlist.map((b, i) => (
-                  <BookCard key={i} book={b} />
-                ))}
-                <Button as={Link} to={"/read"} variant="success">
-                  +
-                </Button>
-              </div>
-            </>
-          )}
-        </>
-      )}
-    </>
-  );
-};
 
 export default App;

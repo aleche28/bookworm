@@ -45,13 +45,8 @@ const BookList = (props) => {
     // eslint-disable-next-line
   }, [user, location]);
 
-  const handleAdd = async (title, author) => {
-    const book = {
-      id: uuidv4(),
-      title: title,
-      author: author,
-      favorite: false,
-    };
+  const handleAdd = async (book) => {
+    book.id = uuidv4();
     await updateList(user.uid, props.listType, [...books, book]);
     setAddBook(false);
     fetchBooks();

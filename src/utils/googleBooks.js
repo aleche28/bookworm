@@ -15,7 +15,12 @@ const searchBook = async (title, author) => {
         Object.assign({
           title: b.volumeInfo.title,
           author: b.volumeInfo.authors[0],
+          googleBooksId: b.id,
           imageLinks: b.volumeInfo.imageLinks,
+          /* if there are no imageLinks, a try can be made calling
+           * directly the API for the specific book
+           * (just access the field selfLink or make a GET for the specific book Id)
+           */
         })
       );
       return books;
