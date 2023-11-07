@@ -3,7 +3,6 @@ import { googleLogin, login } from "../auth/auth";
 import { Alert, Button, Container, Form, Row } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
 import GoogleLoginButton from "./GoogleLoginButton";
-// import "../googleSignIn.css";
 
 const LoginForm = () => {
   const [email, setEmail] = useState("");
