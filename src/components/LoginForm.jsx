@@ -2,6 +2,8 @@ import { useState } from "react";
 import { googleLogin, login } from "../auth/auth";
 import { Alert, Button, Container, Form, Row } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
+import GoogleLoginButton from "./GoogleLoginButton";
+// import "../googleSignIn.css";
 
 const LoginForm = () => {
   const [email, setEmail] = useState("");
@@ -26,7 +28,9 @@ const LoginForm = () => {
     else navigate("/");
   };
 
-  const handleGoogleLogin = async () => {
+  const handleGoogleLogin = async (e) => {
+    e.preventDefault();
+
     const res = await googleLogin();
     if (res.error) setErrMsg(res.error);
     else navigate("/");
@@ -96,9 +100,11 @@ const LoginForm = () => {
           </div>
           <div className="divider">OR</div>
           <div className="d-grid gap-2">
-            <Button variant="outline-secondary" onClick={handleGoogleLogin}>
+            {/* <Button variant="outline-secondary" onClick={handleGoogleLogin}>
               <i className="bi bi-google" /> <span>Sign in with Google</span>
-            </Button>
+              <a href="https://www.flaticon.com/free-icons/google" title="google icons">Google icons created by Freepik - Flaticon</a>
+            </Button> */}
+            <GoogleLoginButton handleGoogleLogin={handleGoogleLogin} />
           </div>
         </Form>
       </Container>
