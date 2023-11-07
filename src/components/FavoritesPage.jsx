@@ -5,7 +5,7 @@ import BookRow from "./BookRow";
 import { getFavorites, getList, updateList } from "../books";
 import { useNavigate } from "react-router-dom";
 
-function FavoritesPage(props) {
+const FavoritesPage = (props) => {
   const { user } = useContext(AuthContext);
 
   const [loading, setLoading] = useState(true);
@@ -107,6 +107,6 @@ function FavoritesPage(props) {
       )}
     </>
   );
-}
+};
 
 export default FavoritesPage;

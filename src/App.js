@@ -17,8 +17,9 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import { getList } from "./books";
 import BookList from "./components/BookList";
-import { Button, Container, Nav, Navbar, Row, Spinner } from "react-bootstrap";
+import { Button, Container, Nav, Navbar, Spinner } from "react-bootstrap";
 import FavoritesPage from "./components/FavoritesPage";
+import BookCard from "./components/BookCard";
 
 function App() {
   return (
@@ -193,16 +194,14 @@ const HomePage = (props) => {
             </Container>
           ) : (
             <>
-              {readinglist.map((b, i) => (
-                <Row key={i}>
-                  <p>
-                    <b>{b.title}</b>, by {b.author}
-                  </p>
-                </Row>
-              ))}
-              <Button as={Link} to={"/reading"} variant="success">
-                Add
-              </Button>
+              <div className="book-cards-row">
+                {readinglist.map((b, i) => (
+                  <BookCard key={i} book={b} />
+                ))}
+                <Button as={Link} to={"/reading"} variant="success">
+                  +
+                </Button>
+              </div>
             </>
           )}
 
@@ -215,16 +214,14 @@ const HomePage = (props) => {
             </Container>
           ) : (
             <>
-              {toreadlist.map((b, i) => (
-                <Row key={i}>
-                  <p>
-                    <b>{b.title}</b>, by {b.author}
-                  </p>
-                </Row>
-              ))}
-              <Button as={Link} to={"/toread"} variant="success">
-                Add
-              </Button>
+              <div className="book-cards-row">
+                {toreadlist.map((b, i) => (
+                  <BookCard key={i} book={b} />
+                ))}
+                <Button as={Link} to={"/toread"} variant="success">
+                  +
+                </Button>
+              </div>
             </>
           )}
 
@@ -237,16 +234,14 @@ const HomePage = (props) => {
             </Container>
           ) : (
             <>
-              {readlist.map((b, i) => (
-                <Row key={i}>
-                  <p>
-                    <b>{b.title}</b>, by {b.author}
-                  </p>
-                </Row>
-              ))}
-              <Button as={Link} to={"/read"} variant="success">
-                Add
-              </Button>
+              <div className="book-cards-row">
+                {readlist.map((b, i) => (
+                  <BookCard key={i} book={b} />
+                ))}
+                <Button as={Link} to={"/read"} variant="success">
+                  +
+                </Button>
+              </div>
             </>
           )}
         </>
