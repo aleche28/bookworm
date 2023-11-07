@@ -8,6 +8,7 @@ const LoginForm = () => {
   const [password, setPassword] = useState("");
   const [errMsg, setErrMsg] = useState("");
   const [validated, setValidated] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const navigate = useNavigate();
 
@@ -31,7 +32,11 @@ const LoginForm = () => {
         <Row>
           <h1>Login</h1>
         </Row>
-        {errMsg && <Alert key={"danger"} variant={"danger"}>{errMsg}</Alert>}
+        {errMsg && (
+          <Alert key={"danger"} variant={"danger"}>
+            {errMsg}
+          </Alert>
+        )}
         <Form noValidate validated={validated} onSubmit={handleSubmit}>
           <Form.Group className="mb-3 mt-3" controlId="formGroupUsername">
             <Form.Label>Email</Form.Label>
@@ -52,13 +57,20 @@ const LoginForm = () => {
             <Form.Label>Password</Form.Label>
             <Form.Control
               required
-              type="password"
+              type={showPassword ? "text" : "password"}
               placeholder="Password"
               value={password}
               onChange={(ev) => {
                 setPassword(ev.target.value);
               }}
             />
+            <i
+              id="toggle-password"
+              className={
+                showPassword ? "bi bi-eye-slash-fill" : "bi bi-eye-fill"
+              }
+              onClick={() => setShowPassword(!showPassword)}
+            ></i>
             <Form.Control.Feedback type="invalid">
               Please enter a password.
             </Form.Control.Feedback>

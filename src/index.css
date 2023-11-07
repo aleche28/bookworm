@@ -92,3 +92,15 @@ code {
     display: none;
   }
 }
+
+#toggle-password {
+  display: flex;
+  justify-content: right;
+  margin-right: 10px;
+  position: relative;
+  bottom: 26px;
+}
+
+#toggle-password:hover {
+  cursor: pointer;
+}
