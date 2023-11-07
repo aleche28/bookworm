@@ -64,17 +64,20 @@ const LoginForm = () => {
                 setPassword(ev.target.value);
               }}
             />
-            <i
-              id="toggle-password"
-              className={
-                showPassword ? "bi bi-eye-slash-fill" : "bi bi-eye-fill"
-              }
-              onClick={() => setShowPassword(!showPassword)}
-            ></i>
+            <div className="over-password">
+              <i
+                id="toggle-password"
+                className={
+                  showPassword ? "bi bi-eye-slash-fill" : "bi bi-eye-fill"
+                }
+                onClick={() => setShowPassword(!showPassword)}
+              ></i>
+            </div>
             <Form.Control.Feedback type="invalid">
               Please enter a password.
             </Form.Control.Feedback>
           </Form.Group>
+            
           <div className="d-grid gap-2">
             <Button className="mb-3 mt-3" variant="primary" type="submit">
               Login

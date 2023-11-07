@@ -93,12 +93,18 @@ code {
   }
 }
 
-#toggle-password {
+.over-password {
   display: flex;
-  justify-content: right;
+  flex-direction: row;
+  justify-content: flex-end;
+}
+
+#toggle-password {
+  /* display: flex;
+  justify-content: right; */
   margin-right: 10px;
   position: relative;
-  bottom: 26px;
+  bottom: 30px;
 }
 
 #toggle-password:hover {
