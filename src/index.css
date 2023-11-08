@@ -143,16 +143,26 @@ code {
 
 .book-card {
   width: 200px;
+  height: 300px;
   margin: 1rem;
-  background-color: var(--bs-success);
+  background-color: lightgray;
   box-shadow: 0 4px 5px rgba(0, 0, 0, 0.2);
   position: relative;
   overflow: hidden;
   border-radius: 5px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .book-card img {
   width: 100%;
+  height: auto; /* Maintain image proportions */
+  object-fit: cover; /* Crop the image to fit the container */
+
+  object-position: center center; /* Center the cropped image */
+  z-index: 0;
 }
 
 .book-card svg {
@@ -204,4 +214,31 @@ code {
 
 .book-card:hover .overview {
   transform: translateY(0);
+}
+
+.book-cards-container {
+  /* border: 2px solid rgba(154, 191, 154, 0.732); */
+  border-radius: 10px;
+  margin-top: 2rem;
+  padding: 0 0!important;
+  background-color: rgba(190, 214, 190, 0.45);
+  position: relative;
+}
+
+.book-cards-list-name {
+  background-color: var(--bs-success);
+  width: 100%;
+  border-top-right-radius: 10px;
+  border-top-left-radius: 10px;
+  padding: 5px 20px;
+}
+
+.book-cards-list-name h2 {
+  margin: 5px 0;
+  color: #eee;
+}
+
+.main-content {
+  height: 100%;
+  padding-bottom: 3rem;
 }

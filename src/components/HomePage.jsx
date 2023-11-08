@@ -76,29 +76,33 @@ const HomePage = (props) => {
           <h1>Welcome back!</h1>
           {Object.entries(listTypes).map(([listType, listName]) => (
             <>
-              <h2>{listName}</h2>
-              {loading ? (
-                <Container className="d-flex my-5 justify-content-left">
-                  <Spinner animation="border" role="status">
-                    <span className="visually-hidden">Loading...</span>
-                  </Spinner>
-                </Container>
-              ) : (
-                <>
-                  <div className="book-cards-row">
-                    {chooseListFromType(listType).map((b, i) => (
-                      <BookCard key={i} book={b} />
-                    ))}
-                    <Button
-                      as={Link}
-                      to={`/${listType.slice(0, -"_books".length)}`}
-                      variant="success"
-                    >
-                      +
-                    </Button>
-                  </div>
-                </>
-              )}
+              <Container className="book-cards-container">
+                <div className="book-cards-list-name">
+                  <h2>{listName}</h2>
+                </div>
+                {loading ? (
+                  <Container className="d-flex my-5 justify-content-left">
+                    <Spinner animation="border" role="status">
+                      <span className="visually-hidden">Loading...</span>
+                    </Spinner>
+                  </Container>
+                ) : (
+                  <>
+                    <div className="book-cards-row">
+                      {chooseListFromType(listType).map((b, i) => (
+                        <BookCard key={i} book={b} />
+                      ))}
+                      <Button
+                        as={Link}
+                        to={`/${listType.slice(0, -"_books".length)}`}
+                        variant="success"
+                      >
+                        +
+                      </Button>
+                    </div>
+                  </>
+                )}
+              </Container>
             </>
           ))}
         </>

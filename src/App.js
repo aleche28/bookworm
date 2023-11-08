@@ -107,7 +107,7 @@ function MainLayout() {
         </Navbar>
       </header>
       <main>
-        <Container>
+        <Container className="main-content">
           <Outlet />
         </Container>
       </main>
