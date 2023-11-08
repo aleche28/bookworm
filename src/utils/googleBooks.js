@@ -3,7 +3,7 @@ const googleAPI = "https://www.googleapis.com/books/v1/volumes?q=";
 const searchBook = async (title, author) => {
   let queryString = "";
   title && (queryString += `intitle:${title}+`);
-  author && (queryString += `intuthor:${author}`);
+  author && (queryString += `inauthor:${author}`);
 
   try {
     const res = await fetch(googleAPI + queryString);
