@@ -2,9 +2,9 @@ import { db } from "./firebase";
 import { doc, getDoc, setDoc } from "firebase/firestore";
 
 const listTypes = {
+  reading_books: "Reading",
   read_books: "Read",
   toread_books: "To read",
-  reading_books: "Reading",
 };
 
 async function getList(uid, type) {
