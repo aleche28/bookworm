@@ -53,7 +53,7 @@ const BookList = (props) => {
     setInfoMsg("Book added to the list");
   };
 
-  // TO-DO: Update this to delete based on book uuid and not based on book position
+  // TODO: Update this to delete based on book uuid and not based on book position
   const handleDelete = async (index) => {
     const newlist = [];
     books.map((b, i) => {
@@ -115,8 +115,8 @@ const BookList = (props) => {
 
       {user?.uid && !loading && (
         <>
-          <h2>{listTypes[props.listType]}</h2>
-          <Col lg={10}>
+          <h2 className="list-name">{listTypes[props.listType]}</h2>
+          <Col lg={10} className="book-rows-container">
             {books.map((b, i) => {
               if (editBook && editIndex === i)
                 return (

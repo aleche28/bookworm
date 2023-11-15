@@ -42,7 +42,7 @@ const login = async (email, password) => {
 /* DOC: https://firebase.google.com/docs/auth/web/google-signin?authuser=0 */
 const googleLogin = async () => {
   try {
-    // TO-DO: change this to signInWithRedirect
+    // TODO: change this to signInWithRedirect
     await signInWithPopup(auth, provider);
     return true;
   } catch (error) {

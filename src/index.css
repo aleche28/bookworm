@@ -38,14 +38,67 @@ code {
   text-align: center;
 }
 
+.list-name {
+  margin-bottom: 1.5rem;
+  margin-top: 1.5rem;
+}
+
+.book-rows-container {
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
 .book-row {
   background-color:whitesmoke;
+  display: flex;
+  flex-direction: row;
+  margin: 2rem;
+  padding: 1rem 0.2rem;
   /* box-shadow: 5px 5px 5px rgba(34, 35, 58, 0.2); */
 }
 
 .book-row:hover {
   /* cursor: pointer; */
   background-color: rgb(229, 253, 222);
+}
+
+.book-row-thumbnail {
+  display: flex;
+  justify-content: space-evenly;
+}
+
+.book-row-thumbnail img {
+  height: 150px;
+  width: auto;
+  border-radius: 5px;
+}
+
+.book-row-title-author {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  margin-left: 1rem;
+}
+
+@media (max-width: 768px) {
+  .book-row-title-author {
+    margin-left: 0;
+  }
+}
+
+.book-row-title {
+  font-weight: bold;
+  font-size: large;
+}
+
+.book-row-author {
+  font-style: italic;
+}
+
+.book-row-list {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .book-row-btn {
@@ -61,7 +114,13 @@ code {
   background-color:whitesmoke;
 }
 
-#dropdown-more::after { 
+#dropdown-more-btn {
+  background-color: transparent;
+  color: var(--bs-secondary);
+  border: none;
+}
+
+#dropdown-more-btn::after { 
   content: none; 
 }
 

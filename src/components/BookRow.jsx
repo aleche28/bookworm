@@ -30,19 +30,27 @@ const BookRow = (props) => {
 
   return (
     <>
-      <Row className="book-row my-3 py-3 ps-5 pe-5 border rounded">
-        <Col xs={4}>{props.book.title}</Col>
-        <Col xs={4}>{props.book.author}</Col>
+      <Row className="book-row border rounded">
+        <Col className="book-row-thumbnail">
+          <img
+            src={props.book.imageLinks.thumbnail}
+            alt={props.book.title}
+          ></img>
+        </Col>
+        <Col
+          className={
+            props.list === "read_books"
+              ? "book-row-title-author col-md-6"
+              : "book-row-title-author col-md-5"
+          }
+        >
+          <Row className="book-row-title">{props.book.title}</Row>
+          <Row className="book-row-author">{props.book.author}</Row>
+        </Col>
 
-        {/* at the moment the edit function has been moved into the dropdown */}
-        {/* <Col xs={1} className="book-row-btn pl-1">
-        <OverlayTrigger placement="top" overlay={tooltip("Edit book")}>
-          <Button aria-label="Edit book" onClick={() => {}}>
-            <i className="bi bi-pencil-fill"></i>
-          </Button>
-        </OverlayTrigger>
-      </Col> */}
-        {props.favoritesPage && <Col>{listTypes[props.book.list]}</Col>}
+        {props.favoritesPage && (
+          <Col className="book-row-list">{listTypes[props.book.list]}</Col>
+        )}
 
         <Col
           xs={1}
@@ -126,7 +134,7 @@ const BookRow = (props) => {
             </Col>
             <Col xs={1} className="book-row-btn">
               <Dropdown>
-                <Dropdown.Toggle variant="outline" id="dropdown-more">
+                <Dropdown.Toggle /* variant="outline" */ id="dropdown-more-btn">
                   <i className="bi bi-three-dots-vertical"></i>
                 </Dropdown.Toggle>
 

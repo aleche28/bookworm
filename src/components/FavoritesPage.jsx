@@ -86,7 +86,7 @@ const FavoritesPage = (props) => {
           ) : (
             <>
               {books.length > 0 ? (
-                <Col xs={10} lg={8}>
+                <Col lg={8} className="book-rows-container">
                   {books.map((b, i) => (
                     <BookRow
                       key={i}
