@@ -37,7 +37,7 @@ const LoginForm = () => {
 
   return (
     <Container className="d-flex justify-content-center align-items-center vh-100">
-      <Container className="login-container col-8 col-md-6 col-lg-4 border rounded px-4">
+      <Container className="login-container border rounded px-4">
         <Row>
           <h1>Login</h1>
         </Row>

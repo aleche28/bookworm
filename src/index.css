@@ -28,6 +28,7 @@ code {
 
   border-radius: 15px;
   border-color:lightgray !important;
+  max-width: 400px !important;
 }
 
 .login-container h1 {
