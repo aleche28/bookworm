@@ -1,12 +1,11 @@
 import { useContext, useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { getList } from "../books";
 import { Button, Container, Spinner } from "react-bootstrap";
-import BookCard from "./BookCard";
-import AuthContext from "../auth/AuthContext";
-import { listTypes } from "../books";
+import BookCard from "./BookCard.jsx";
+import AuthContext from "../auth/AuthContext.jsx";
+import { listTypes, getList } from "../books";
 
-const HomePage = (props) => {
+const HomePage = () => {
   const { user } = useContext(AuthContext);
 
   const [loading, setLoading] = useState(true);

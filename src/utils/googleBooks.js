@@ -32,4 +32,4 @@ const searchBook = async (title, author) => {
   }
 };
 
-module.exports = searchBook;
+export default searchBook;

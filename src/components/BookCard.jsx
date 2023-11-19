@@ -1,5 +1,3 @@
-import React from "react";
-
 const defaultImg = "sapiens-cover.jpeg";
 
 const BookCard = (props) => {

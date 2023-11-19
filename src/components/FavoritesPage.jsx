@@ -1,11 +1,11 @@
-import React, { useContext, useEffect, useState } from "react";
-import AuthContext from "../auth/AuthContext";
+import { useContext, useEffect, useState } from "react";
+import AuthContext from "../auth/AuthContext.jsx";
 import { Alert, Col, Container, Spinner } from "react-bootstrap";
-import BookRow from "./BookRow";
+import BookRow from "./BookRow.jsx";
 import { getFavorites, getList, updateList } from "../books";
 import { useNavigate } from "react-router-dom";
 
-const FavoritesPage = (props) => {
+const FavoritesPage = () => {
   const { user } = useContext(AuthContext);
 
   const [loading, setLoading] = useState(true);

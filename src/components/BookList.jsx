@@ -1,10 +1,10 @@
 import { useContext, useEffect, useState } from "react";
-import AuthContext from "../auth/AuthContext";
+import AuthContext from "../auth/AuthContext.jsx";
 import { getList, listTypes, updateList } from "../books";
 import { Alert, Button, Col, Container, Spinner } from "react-bootstrap";
 import { useLocation, useNavigate } from "react-router-dom";
-import AddEditForm from "./AddEditForm";
-import BookRow from "./BookRow";
+import AddEditForm from "./AddEditForm.jsx";
+import BookRow from "./BookRow.jsx";
 import { v4 as uuidv4 } from "uuid";
 
 const BookList = (props) => {

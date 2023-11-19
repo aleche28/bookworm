@@ -1,5 +1,3 @@
-import React from "react";
-
 /* Following google guidelines: https://developers.google.com/identity/branding-guidelines */
 const GoogleLoginButton = (props) => {
   return (
