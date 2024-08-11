@@ -12,6 +12,7 @@ import BookList from "./components/BookList.jsx";
 import { Container, Nav, Navbar } from "react-bootstrap";
 import FavoritesPage from "./components/FavoritesPage.jsx";
 import HomePage from "./components/HomePage.jsx";
+import SearchBook from "./components/SearchBook.jsx";
 
 function App() {
   return (
@@ -35,6 +36,7 @@ function App() {
             <Route path="favorites" element={<FavoritesPage />} />
             <Route path="login" element={<LoginForm />} />
             <Route path="signup" element={<Signup />} />
+            <Route path="search" element={<SearchBook />} />
           </Route>
         </Routes>
       </AuthProvider>

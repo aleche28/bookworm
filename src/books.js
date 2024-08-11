@@ -1,5 +1,5 @@
 import { db } from "./firebase";
-import { doc, getDoc, setDoc } from "firebase/firestore";
+import { arrayUnion, doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
 
 const listTypes = {
   reading_books: "Reading",
@@ -34,6 +34,15 @@ async function updateList(uid, type, newList) {
   await setDoc(docRef, { list: newList }, { merge: true });
 }
 
+async function addToList(uid, type, book) {
+  if (!(type in listTypes)) {
+    throw new Error("This type of list does not exist.");
+  }
+
+  const docRef = doc(db, type, uid);
+  await updateDoc(docRef, { list: arrayUnion(book) });
+}
+
 async function getFavorites(uid) {
   /* firebase doesn't support query on multiple collections,
   so three reads are necessary: one for each book list */
@@ -52,4 +61,4 @@ async function getFavorites(uid) {
   return list;
 }
 
-export { getList, updateList, getFavorites, listTypes };
+export { getList, updateList, addToList, getFavorites, listTypes };

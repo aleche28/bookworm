@@ -5,7 +5,6 @@ import { Alert, Button, Col, Container, Spinner } from "react-bootstrap";
 import { useLocation, useNavigate } from "react-router-dom";
 import AddEditForm from "./AddEditForm.jsx";
 import BookRow from "./BookRow.jsx";
-import { v4 as uuidv4 } from "uuid";
 
 const BookList = (props) => {
   const { user } = useContext(AuthContext);
@@ -14,10 +13,9 @@ const BookList = (props) => {
 
   const [loading, setLoading] = useState(true);
   const [errMsg, setErrMsg] = useState("");
-  const [infoMsg, setInfoMsg] = useState("");
+  const [infoMsg, setInfoMsg] = useState(location.state?.infoMsg || "");
   const [books, setBooks] = useState([]);
 
-  const [addBook, setAddBook] = useState(false);
   const [editBook, setEditBook] = useState(false);
   const [editIndex, setEditIndex] = useState(-1);
 
@@ -44,14 +42,6 @@ const BookList = (props) => {
     fetchBooks();
     // eslint-disable-next-line
   }, [user, location]);
-
-  const handleAdd = async (book) => {
-    book.id = uuidv4();
-    await updateList(user.uid, props.listType, [...books, book]);
-    setAddBook(false);
-    fetchBooks();
-    setInfoMsg("Book added to the list");
-  };
 
   // TODO: Update this to delete based on book uuid and not based on book position
   const handleDelete = async (index) => {
@@ -126,7 +116,6 @@ const BookList = (props) => {
                   >
                     <AddEditForm
                       edit={true}
-                      handleAdd={handleAdd}
                       handleUpdate={(book) => handleUpdate(i, book)}
                       cancelEditBook={() => {
                         setEditBook(false);
@@ -147,28 +136,22 @@ const BookList = (props) => {
                     handleUpdate={(book) => handleUpdate(i, book, false)}
                     toggleEditBook={() => {
                       setEditIndex(i);
-                      setAddBook(false);
                       setEditBook(true);
                     }}
                   />
                 );
             })}
 
-            {addBook ? (
-              <Container className="book-add-form my-3 py-3 px-5 border rounded">
-                <AddEditForm handleAdd={handleAdd} setAddBook={setAddBook} />
-              </Container>
-            ) : (
-              <Button
-                variant="success"
-                onClick={() => {
-                  setEditBook(false);
-                  setAddBook(true);
-                }}
-              >
-                <i className="bi bi-plus"></i>
-              </Button>
-            )}
+            <Button
+              variant="success"
+              onClick={() =>
+                navigate("/search", {
+                  state: { listType: props.listType },
+                })
+              }
+            >
+              <i className="bi bi-plus"></i>
+            </Button>
           </Col>
         </>
       )}
