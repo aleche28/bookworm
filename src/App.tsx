@@ -1,18 +1,18 @@
 import { useContext } from "react";
 import { BrowserRouter, Link, Outlet, Route, Routes } from "react-router-dom";
-import { AuthProvider } from "./auth/AuthProvider.jsx";
-import AuthContext from "./auth/AuthContext.jsx";
-import LoginForm from "./components/LoginForm.jsx";
-import Signup from "./components/Signup.jsx";
-import { logout } from "./auth/auth.js";
-
+import { AuthProvider } from "./auth/AuthProvider";
+import { AuthContext } from "./auth/AuthContext";
+import { LoginForm } from "./components/LoginForm";
+import { Signup } from "./components/Signup";
+import { logout } from "./auth/auth";
+import { BookList } from "./components/BookList";
+import { Container, Nav, Navbar } from "react-bootstrap";
+import { FavoritesPage } from "./components/FavoritesPage";
+import { HomePage } from "./components/HomePage";
+import { SearchBook } from "./components/SearchBook";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
-import BookList from "./components/BookList.jsx";
-import { Container, Nav, Navbar } from "react-bootstrap";
-import FavoritesPage from "./components/FavoritesPage.jsx";
-import HomePage from "./components/HomePage.jsx";
-import SearchBook from "./components/SearchBook.jsx";
+import * as React from "react";
 
 function App() {
   return (
@@ -68,7 +68,7 @@ function MainLayout() {
               </Link>
             </Navbar.Brand>
             <Navbar.Toggle aria-controls="navbar" />
-            <Navbar.Collapse id="navbar">
+            <Navbar.Collapse id="navbar" role={""}>
               <Nav className="me-auto">
                 <Nav.Link as={Link} to={"/"}>
                   Home
@@ -117,4 +117,4 @@ function MainLayout() {
   );
 }
 
-export default App;
+export { App };

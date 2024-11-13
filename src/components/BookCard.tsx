@@ -1,8 +1,12 @@
+import * as React from "react";
+
 const defaultImg = "sapiens-cover.jpeg";
 
-const BookCard = (props) => {
-  const { book } = props;
+interface BookCardProps {
+  book: Book
+}
 
+const BookCard = ({ book }: BookCardProps) => {
   const imgLink = book.imageLinks?.thumbnail || defaultImg;
 
   return (
@@ -57,4 +61,4 @@ const BookCard = (props) => {
   );
 };
 
-export default BookCard;
+export { BookCard };

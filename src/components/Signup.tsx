@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { signUp } from "../auth/auth";
 import { Container, Row, Form, Button, Alert } from "react-bootstrap";
+import * as React from "react";
 
 const Signup = () => {
   const [email, setEmail] = useState("");
@@ -12,7 +13,7 @@ const Signup = () => {
 
   const navigate = useNavigate();
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: any) => {
     e.preventDefault();
     if (password !== password2) {
       setErrMsg("Passwords do not match");
@@ -25,8 +26,11 @@ const Signup = () => {
 
       setErrMsg("");
       const res = await signUp(email, password);
-      if (res.error) setErrMsg(res.error);
-      else navigate("/login");
+      if (res === true) {
+        navigate("/");
+      } else {
+        setErrMsg(res.error || "Some error occurred while performing the signup operation.");
+      }
     }
   };
 
@@ -103,4 +107,4 @@ const Signup = () => {
   );
 };
 
-export default Signup;
+export { Signup };

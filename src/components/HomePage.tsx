@@ -1,21 +1,26 @@
 import { useContext, useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Button, Container, Spinner } from "react-bootstrap";
-import BookCard from "./BookCard.jsx";
-import AuthContext from "../auth/AuthContext.jsx";
+import { BookCard } from "./BookCard";
+import { AuthContext } from "../auth/AuthContext";
 import { listTypes, getList } from "../books";
+import * as React from "react";
+import { ListTypeKey } from "./BookList";
 
 const HomePage = () => {
   const { user } = useContext(AuthContext);
 
   const [loading, setLoading] = useState(true);
-  const [readlist, setReadlist] = useState([]);
-  const [toreadlist, setToreadlist] = useState([]);
-  const [readinglist, setReadinglist] = useState([]);
+  const [readlist, setReadlist] = useState<Book[]>([]);
+  const [toreadlist, setToreadlist] = useState<Book[]>([]);
+  const [readinglist, setReadinglist] = useState<Book[]>([]);
 
   const navigate = useNavigate();
 
   async function fetchReadlist() {
+    if (!user) {
+      return;
+    }
     try {
       const list = await getList(user.uid, "read_books");
       setReadlist(list);
@@ -25,6 +30,9 @@ const HomePage = () => {
   }
 
   async function fetchReadinglist() {
+    if (!user) {
+      return;
+    }
     try {
       const list = await getList(user.uid, "reading_books");
       setReadinglist(list);
@@ -34,6 +42,9 @@ const HomePage = () => {
   }
 
   async function fetchToreadlist() {
+    if (!user) {
+      return;
+    }
     try {
       const list = await getList(user.uid, "toread_books");
       setToreadlist(list);
@@ -54,14 +65,12 @@ const HomePage = () => {
       fetchReadlist();
       fetchReadinglist();
       fetchToreadlist();
-      // setTimeout(() => {
       setLoading(false);
-      // }, 200);
     }
     // eslint-disable-next-line
   }, [user]);
 
-  const chooseListFromType = (type) => {
+  const chooseListFromType = (type: ListTypeKey) => {
     if (type === "read_books") return readlist;
     else if (type === "toread_books") return toreadlist;
     else if (type === "reading_books") return readinglist;
@@ -87,12 +96,11 @@ const HomePage = () => {
               ) : (
                 <>
                   <div className="book-cards-row">
-                    {chooseListFromType(listType).map((b, i) => (
+                    {chooseListFromType(listType as ListTypeKey).map((b, i) => (
                       <BookCard key={i} book={b} />
                     ))}
                     <Button
-                      as={Link}
-                      to={`/${listType.slice(0, -"_books".length)}`}
+                      onClick={() => navigate(`/${listType.slice(0, -"_books".length)}`)}
                       variant="success"
                     >
                       +
@@ -108,4 +116,4 @@ const HomePage = () => {
   );
 };
 
-export default HomePage;
+export { HomePage };

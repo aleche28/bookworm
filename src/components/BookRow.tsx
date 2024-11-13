@@ -1,5 +1,5 @@
 import { useContext } from "react";
-import AuthContext from "../auth/AuthContext.jsx";
+import { AuthContext } from "../auth/AuthContext";
 import { getList, listTypes, updateList } from "../books";
 import {
   Button,
@@ -9,22 +9,37 @@ import {
   Row,
   Tooltip,
 } from "react-bootstrap";
+import * as React from "react";
+import { ListTypeKey } from "./BookList";
 
-const BookRow = (props) => {
+interface BookRowProps {
+  book: Book,
+  id: number,
+  list?: ListTypeKey,
+  favoritesPage: boolean,
+  handleDelete?: (id: number) => void,
+  handleUpdate: (book: Book) => void,
+  toggleEditBook?: () => void
+}
+
+const BookRow = (props: BookRowProps) => {
   const { user } = useContext(AuthContext);
 
-  const tooltip = (sentence) => {
+  const tooltip = (sentence: string) => {
     return <Tooltip id="tooltip">{sentence}</Tooltip>;
   };
 
-  const moveToList = async (destList) => {
+  const moveToList = async (destList: ListTypeKey) => {
+    if (!user) {
+      return;
+    }
     const list = await getList(user.uid, destList);
     await updateList(user.uid, destList, [...list, props.book]);
 
-    props.handleDelete(props.id);
+    props.handleDelete && props.handleDelete(props.id);
   };
 
-  const updateFavorite = async (book) => {
+  const updateFavorite = async (book: Book) => {
     props.handleUpdate(book);
   };
 
@@ -33,7 +48,7 @@ const BookRow = (props) => {
       <Row className="book-row border rounded">
         <Col className="book-row-thumbnail">
           <img
-            src={props.book.imageLinks.thumbnail}
+            src={props.book.imageLinks?.thumbnail || "sapiens-cover.jpeg"}
             alt={props.book.title}
           ></img>
         </Col>
@@ -126,7 +141,7 @@ const BookRow = (props) => {
               >
                 <Button
                   variant="danger"
-                  onClick={() => props.handleDelete(props.id)}
+                  onClick={() => props.handleDelete && props.handleDelete(props.id)}
                 >
                   <i className="bi bi-trash3"></i>
                 </Button>
@@ -185,7 +200,7 @@ const BookRow = (props) => {
                   </Dropdown.Item>
                   <Dropdown.Item
                     id="toggle-entry"
-                    onClick={() => props.handleDelete(props.id)}
+                    onClick={() => props.handleDelete && props.handleDelete(props.id)}
                   >
                     Remove book from list
                   </Dropdown.Item>
@@ -199,4 +214,4 @@ const BookRow = (props) => {
   );
 };
 
-export default BookRow;
+export { BookRow };

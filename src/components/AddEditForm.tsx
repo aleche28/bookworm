@@ -1,13 +1,23 @@
 import { useState } from "react";
 import { Button, Col, Form, InputGroup, Row } from "react-bootstrap";
-import searchBook from "../utils/googleBooks";
+import { searchBook } from "../utils/googleBooks";
+import * as React from "react";
 
-const AddEditForm = (props) => {
-  const [title, setTitle] = useState(props.book?.title || "");
-  const [author, setAuthor] = useState(props.book?.author || "");
-  const [showDropdown, setShowDropdown] = useState(false);
-  const [googleBooks, setGoogleBooks] = useState([]);
-  const [selectedIndex, setSelectedIndex] = useState(-1);
+interface AddEditFormProps {
+  book: Book,
+  edit: boolean,
+  handleUpdate: (b: Book) => void,
+  cancelEditBook: () => void,
+  handleAdd?: (b: Book) => void,
+  setAddBook?: (val: boolean) => void
+}
+
+const AddEditForm = (props: AddEditFormProps) => {
+  const [title, setTitle] = useState<string>(props.book?.title || "");
+  const [author, setAuthor] = useState<string>(props.book?.author || "");
+  const [showDropdown, setShowDropdown] = useState<boolean>(false);
+  const [googleBooksResults, setGoogleBooksResults] = useState<Book[]>([]);
+  const [selectedIndex, setSelectedIndex] = useState<number>(-1);
 
   const handleSave = (event) => {
     event.preventDefault();
@@ -19,26 +29,27 @@ const AddEditForm = (props) => {
     };
 
     if (selectedIndex !== -1) {
-      const { googleBooksId, imageLinks } = googleBooks[selectedIndex];
+      const { googleBooksId, imageLinks } = googleBooksResults[selectedIndex];
       book.googleBooksId = googleBooksId;
       imageLinks && (book.imageLinks = imageLinks); // if imageLinks is undefined, the field is not added to the object
     }
 
-    props.edit ? props.handleUpdate(book) : props.handleAdd(book);
+    // props.edit ? props.handleUpdate(book) : props.handleAdd(book);
+    props.edit && props.handleUpdate(book)
   };
 
   const fetchGoogleBooks = async () => {
     setSelectedIndex(-1);
     const res = await searchBook(title, author);
-    if (!res.error) setGoogleBooks(res);
-    else setGoogleBooks([]);
+    if (!res.error) setGoogleBooksResults(res);
+    else setGoogleBooksResults([]);
   };
 
   const handleSelectChange = (event) => {
     event.preventDefault();
     const selectedOption = event.target.value;
     setSelectedIndex(selectedOption);
-    const selectedBook = googleBooks[selectedOption];
+    const selectedBook = googleBooksResults[selectedOption];
     setTitle(selectedBook.title);
     setAuthor(selectedBook.author);
   };
@@ -78,8 +89,7 @@ const AddEditForm = (props) => {
               defaultValue={selectedIndex}
               onChange={handleSelectChange}
             >
-              {/* <option value={"|"}>Select the corresponding book</option> */}
-              {googleBooks.map((b, i) => (
+              {googleBooksResults.map((b, i) => (
                 <option key={i} value={i}>
                   {b.title} - {b.author}
                 </option>
@@ -114,7 +124,8 @@ const AddEditForm = (props) => {
               className="col-3 mb-3 mt-3"
               variant="secondary"
               onClick={() =>
-                props.edit ? props.cancelEditBook() : props.setAddBook(false)
+                // props.edit ? props.cancelEditBook() : props.setAddBook?(false)
+                props.edit && props.cancelEditBook()
               }
             >
               Cancel
@@ -126,4 +137,4 @@ const AddEditForm = (props) => {
   );
 };
 
-export default AddEditForm;
+export { AddEditForm };

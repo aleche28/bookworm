@@ -1,7 +1,13 @@
+import * as React from "react";
+
+interface GoogleLoginButtonProps {
+  handleGoogleLogin: (event: any) => void
+}
+
 /* Following google guidelines: https://developers.google.com/identity/branding-guidelines */
-const GoogleLoginButton = (props) => {
+const GoogleLoginButton = ({ handleGoogleLogin }: GoogleLoginButtonProps) => {
   return (
-    <button className="gsi-material-button" onClick={props.handleGoogleLogin}>
+    <button className="gsi-material-button" onClick={handleGoogleLogin}>
       <div className="gsi-material-button-state"></div>
       <div className="gsi-material-button-content-wrapper">
         <div className="gsi-material-button-icon">
@@ -40,4 +46,4 @@ const GoogleLoginButton = (props) => {
   );
 };
 
-export default GoogleLoginButton;
+export { GoogleLoginButton };

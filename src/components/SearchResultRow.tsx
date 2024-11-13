@@ -1,6 +1,12 @@
+import * as React from "react";
 import { Button, Col, Row } from "react-bootstrap";
 
-const SearchResultRow = ({ book, handleSelected }) => {
+interface SearchResultRowProps {
+  book: Book,
+  handleSelected: () => void
+}
+
+const SearchResultRow = ({ book, handleSelected }: SearchResultRowProps) => {
   return (
     <>
       <Row className="book-row border rounded">
@@ -21,4 +27,4 @@ const SearchResultRow = ({ book, handleSelected }) => {
   );
 };
 
-export default SearchResultRow;
+export { SearchResultRow };

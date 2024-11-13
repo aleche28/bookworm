@@ -1,9 +1,10 @@
 import { useContext, useEffect, useState } from "react";
-import AuthContext from "../auth/AuthContext.jsx";
+import { AuthContext } from "../auth/AuthContext";
 import { Alert, Col, Container, Spinner } from "react-bootstrap";
-import BookRow from "./BookRow.jsx";
+import { BookRow } from "./BookRow";
 import { getFavorites, getList, updateList } from "../books";
 import { useNavigate } from "react-router-dom";
+import * as React from "react";
 
 const FavoritesPage = () => {
   const { user } = useContext(AuthContext);
@@ -11,7 +12,7 @@ const FavoritesPage = () => {
   const [loading, setLoading] = useState(true);
   const [errMsg, setErrMsg] = useState("");
   const [infoMsg, setInfoMsg] = useState("");
-  const [books, setBooks] = useState([]);
+  const [books, setBooks] = useState<Book[]>([]);
 
   const navigate = useNavigate();
 
@@ -39,11 +40,14 @@ const FavoritesPage = () => {
     // eslint-disable-next-line
   }, [user]);
 
-  async function handleUpdate(book) {
+  async function handleUpdate(book: Book) {
+    if (!user) {
+      return;
+    }
     const list = await getList(user.uid, book.list); // list from where the book is located (to read, read, reading)
-    const newlist = [];
+    const newlist: Book[] = [];
     list.map((b) => {
-      if (b.id !== book.id) newlist.push(b);
+      if (b.id !== undefined && b.id !== book.id) newlist.push(b);
       else newlist.push(book);
       return null;
     });
@@ -93,7 +97,6 @@ const FavoritesPage = () => {
                       id={i}
                       book={b}
                       favoritesPage={true}
-                      setErrMsg={setErrMsg}
                       handleUpdate={handleUpdate}
                     />
                   ))}
@@ -109,4 +112,4 @@ const FavoritesPage = () => {
   );
 };
 
-export default FavoritesPage;
+export { FavoritesPage };

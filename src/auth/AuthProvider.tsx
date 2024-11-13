@@ -1,12 +1,15 @@
-import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { getAuth, onAuthStateChanged, User } from "firebase/auth";
 import { useState, useEffect } from "react";
-import AuthContext from "./AuthContext.jsx";
+import { AuthContext } from "./AuthContext";
 import { app } from "../firebase";
+import * as React from "react";
 
 const auth = getAuth(app);
 
+export type UserStateType = User | { uid: null } | null;
+
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState<UserStateType>(null);
 
   useEffect(() => {
     onAuthStateChanged(auth, (user) => {

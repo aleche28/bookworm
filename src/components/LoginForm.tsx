@@ -2,7 +2,8 @@ import { useState } from "react";
 import { googleLogin, login } from "../auth/auth";
 import { Alert, Button, Container, Form, Row } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
-import GoogleLoginButton from "./GoogleLoginButton.jsx";
+import { GoogleLoginButton } from "./GoogleLoginButton";
+import * as React from "react";
 
 const LoginForm = () => {
   const [email, setEmail] = useState("");
@@ -13,7 +14,7 @@ const LoginForm = () => {
 
   const navigate = useNavigate();
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: any) => {
     e.preventDefault();
     const form = e.currentTarget;
     const isValid = form.checkValidity();
@@ -23,16 +24,22 @@ const LoginForm = () => {
 
     setErrMsg("");
     const res = await login(email, password);
-    if (res.error) setErrMsg(res.error);
-    else navigate("/");
+    if (res === true) {
+      navigate("/");
+    } else {
+      setErrMsg(res.error || "Some error occurred while performing the login operation.");
+    }
   };
 
-  const handleGoogleLogin = async (e) => {
+  const handleGoogleLogin = async (e: any) => {
     e.preventDefault();
 
     const res = await googleLogin();
-    if (res.error) setErrMsg(res.error);
-    else navigate("/");
+    if (res === true) {
+      navigate("/");
+    } else {
+      setErrMsg(res.error || "Some error occurred while performing the login operation.");
+    }
   };
 
   return (
@@ -111,4 +118,4 @@ const LoginForm = () => {
   );
 };
 
-export default LoginForm;
+export { LoginForm };

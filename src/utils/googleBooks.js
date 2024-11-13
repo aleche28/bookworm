@@ -51,4 +51,4 @@ const getBookBySelfLink = async (selfLink) => {
   }
 };
 
-export default searchBook;
+export { searchBook };

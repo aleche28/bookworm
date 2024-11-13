@@ -1,20 +1,28 @@
 import { useContext, useEffect, useState } from "react";
-import AuthContext from "../auth/AuthContext.jsx";
+import { AuthContext } from "../auth/AuthContext";
 import { getList, listTypes, updateList } from "../books";
 import { Alert, Button, Col, Container, Spinner } from "react-bootstrap";
 import { useLocation, useNavigate } from "react-router-dom";
-import AddEditForm from "./AddEditForm.jsx";
-import BookRow from "./BookRow.jsx";
+import { AddEditForm } from "./AddEditForm";
+import { BookRow } from "./BookRow";
+import * as React from "react";
 
-const BookList = (props) => {
+type ListTypeKey = "toread_books" | "read_books" | "reading_books";
+
+interface BookListProps {
+  listType: ListTypeKey,
+  listName: string
+}
+
+const BookList = (props: BookListProps) => {
   const { user } = useContext(AuthContext);
   const location = useLocation();
   const navigate = useNavigate();
 
   const [loading, setLoading] = useState(true);
   const [errMsg, setErrMsg] = useState("");
-  const [infoMsg, setInfoMsg] = useState(location.state?.infoMsg || "");
-  const [books, setBooks] = useState([]);
+  const [infoMsg, setInfoMsg] = useState<string>(location.state?.infoMsg || "");
+  const [books, setBooks] = useState<Book[]>([]);
 
   const [editBook, setEditBook] = useState(false);
   const [editIndex, setEditIndex] = useState(-1);
@@ -44,8 +52,11 @@ const BookList = (props) => {
   }, [user, location]);
 
   // TODO: Update this to delete based on book uuid and not based on book position
-  const handleDelete = async (index) => {
-    const newlist = [];
+  const handleDelete = async (index: number) => {
+    if (!user) {
+      return;
+    }
+    const newlist: Book[] = [];
     books.map((b, i) => {
       if (index !== i) newlist.push(b);
       return null;
@@ -55,9 +66,12 @@ const BookList = (props) => {
     setInfoMsg("Book removed from the list");
   };
 
-  const handleUpdate = async (id, book, showMsg = true) => {
+  const handleUpdate = async (id: number, book: Book, showMsg = true) => {
+    if (!user) {
+      return;
+    }
     // temp implementation: old book is deleted and new book is added
-    const newlist = [];
+    const newlist: Book[] = [];
     books.map((b, i) => {
       if (id !== i) newlist.push(b);
       else newlist.push(book);
@@ -132,6 +146,7 @@ const BookList = (props) => {
                     id={i}
                     book={b}
                     list={props.listType}
+                    favoritesPage={false}
                     handleDelete={handleDelete}
                     handleUpdate={(book) => handleUpdate(i, book, false)}
                     toggleEditBook={() => {
@@ -159,4 +174,4 @@ const BookList = (props) => {
   );
 };
 
-export default BookList;
+export { BookList, ListTypeKey };

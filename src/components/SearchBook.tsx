@@ -7,12 +7,13 @@ import {
   InputGroup,
   Spinner,
 } from "react-bootstrap";
-import searchBook from "../utils/googleBooks";
-import SearchResultRow from "./SearchResultRow";
+import { searchBook } from "../utils/googleBooks";
+import { SearchResultRow } from "./SearchResultRow";
 import { useLocation, useNavigate } from "react-router-dom";
 import { v4 as uuidv4 } from "uuid";
 import { addToList } from "../books";
-import AuthContext from "../auth/AuthContext";
+import { AuthContext } from "../auth/AuthContext";
+import * as React from "react";
 
 const SearchBook = () => {
   const { user } = useContext(AuthContext);
@@ -20,7 +21,7 @@ const SearchBook = () => {
   const [title, setTitle] = useState("");
   const [author, setAuthor] = useState("");
   const [isbn, setIsbn] = useState("");
-  const [results, setResults] = useState([]);
+  const [results, setResults] = useState<Book[]>([]);
   const [errMsg, setErrMsg] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
@@ -29,7 +30,10 @@ const SearchBook = () => {
   const listType =
     location.state?.listType || console.log("Error: listType not defined");
 
-  const handleSave = async (selectedIndex) => {
+  const handleSave = async (selectedIndex: number) => {
+    if (!user) {
+      return;
+    }
     setIsLoading(true);
 
     let book = {
@@ -140,4 +144,4 @@ const SearchBook = () => {
   );
 };
 
-export default SearchBook;
+export { SearchBook };
