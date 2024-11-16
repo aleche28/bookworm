@@ -1,18 +1,31 @@
 import { useContext } from "react";
-import { BrowserRouter, Link, Outlet, Route, Routes } from "react-router-dom";
+import {
+  BrowserRouter,
+  Outlet,
+  Route,
+  Routes,
+  useNavigate,
+} from "react-router-dom";
 import { AuthProvider } from "./auth/AuthProvider";
 import { AuthContext } from "./auth/AuthContext";
 import { LoginForm } from "./components/LoginForm";
 import { Signup } from "./components/Signup";
 import { logout } from "./auth/auth";
 import { BookList } from "./components/BookList";
-import { Container, Nav, Navbar } from "react-bootstrap";
 import { FavoritesPage } from "./components/FavoritesPage";
 import { HomePage } from "./components/HomePage";
 import { SearchBook } from "./components/SearchBook";
-import "bootstrap/dist/css/bootstrap.min.css";
-import "bootstrap-icons/font/bootstrap-icons.css";
-import * as React from "react";
+import { FaWorm } from "react-icons/fa6";
+
+// PrimeReact imports
+import { Menubar } from "primereact/menubar";
+import { Button } from "primereact/button";
+import { Panel } from "primereact/panel";
+import "primereact/resources/themes/lara-light-teal/theme.css"; // theme
+// import "primereact/resources/themes/lara-dark-teal/theme.css"; // theme
+import "primereact/resources/primereact.min.css"; // core css
+import "primeicons/primeicons.css"; // icons
+import "primeflex/primeflex.css"; // flex
 
 function App() {
   return (
@@ -47,71 +60,69 @@ function App() {
 function MainLayout() {
   const { user } = useContext(AuthContext);
 
+  const navigate = useNavigate();
+
   const handleLogout = async () => {
     await logout();
   };
 
+  // Define Menubar items for navigation links
+  const menuItems = [
+    { label: "Home", icon: "pi pi-home", command: () => navigate("/") },
+    { label: "To Read", command: () => navigate("/toread") },
+    { label: "Reading", command: () => navigate("/reading") },
+    { label: "Read", command: () => navigate("/read") },
+    { label: "Favorites", command: () => navigate("/favorites") },
+  ];
+
+  const startMenuItems = (
+    <>
+      <Button
+        icon={FaWorm}
+        label="Bookworm"
+        onClick={() => navigate("/")}
+        text
+      />
+    </>
+  );
+
+  const endMenuItems = (
+    <>
+      {user?.uid ? (
+        <>
+          <Button
+            label={user.displayName as string}
+            icon="pi pi-user"
+            className="p-mr-3"
+            text
+          />
+          <Button
+            severity="danger"
+            label="Logout"
+            icon="pi pi-sign-out"
+            onClick={handleLogout}
+          />
+        </>
+      ) : (
+        <Button
+          label="Login"
+          icon="pi pi-sign-in"
+          onClick={() => navigate("/login")}
+          className="p-mr-2"
+        />
+      )}
+    </>
+  );
+
   return (
     <>
       <header>
-        <Navbar
-          sticky="top"
-          variant="dark"
-          bg="success"
-          expand="lg"
-          className="mb-3"
-        >
-          <Container>
-            <Navbar.Brand>
-              <Link to="/" style={{ color: "white", textDecoration: "none" }}>
-                BookWorm
-              </Link>
-            </Navbar.Brand>
-            <Navbar.Toggle aria-controls="navbar" />
-            <Navbar.Collapse id="navbar" role={""}>
-              <Nav className="me-auto">
-                <Nav.Link as={Link} to={"/"}>
-                  Home
-                </Nav.Link>
-                <Nav.Link as={Link} to={"/toread"}>
-                  To read
-                </Nav.Link>
-                <Nav.Link as={Link} to={"/reading"}>
-                  Reading
-                </Nav.Link>
-                <Nav.Link as={Link} to={"/read"}>
-                  Read
-                </Nav.Link>
-                <Nav.Link as={Link} to={"/favorites"}>
-                  Favorites
-                </Nav.Link>
-              </Nav>
-              <Navbar.Text className="m-0 p-0">
-                {user?.uid ? (
-                  <>
-                    <i className="bi bi-person-circle"></i>{" "}
-                    <span>{user.email}</span>{" "}
-                    <Link
-                      className="text-decoration-none ms-3"
-                      onClick={handleLogout}
-                    >
-                      Logout
-                    </Link>
-                  </>
-                ) : (
-                  <Nav.Link as={Link} to="/login">
-                    Login
-                  </Nav.Link>
-                )}
-              </Navbar.Text>
-            </Navbar.Collapse>
-          </Container>
-        </Navbar>
+        <Menubar model={menuItems} start={startMenuItems} end={endMenuItems} />
       </header>
       <main>
-        <Container className="main-content">
+        <Panel className="p-mt-3 p-p-3">
           <Outlet />
-        </Container>
+        </Panel>
       </main>
     </>
   );

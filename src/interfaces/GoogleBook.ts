@@ -1,4 +1,4 @@
-interface RawGoogleBook {
+export interface RawGoogleBook {
     id: string,
     selfLink: string,
     volumeInfo: {

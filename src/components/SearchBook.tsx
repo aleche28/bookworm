@@ -1,19 +1,17 @@
 import { useContext, useState } from "react";
-import {
-  Alert,
-  Button,
-  Container,
-  Form,
-  InputGroup,
-  Spinner,
-} from "react-bootstrap";
-import { searchBook } from "../utils/googleBooks";
-import { SearchResultRow } from "./SearchResultRow";
 import { useLocation, useNavigate } from "react-router-dom";
 import { v4 as uuidv4 } from "uuid";
+import { searchBook } from "../utils/googleBooks";
+import { SearchResultRow } from "./SearchResultRow";
 import { addToList } from "../books";
 import { AuthContext } from "../auth/AuthContext";
-import * as React from "react";
+import { InputText } from "primereact/inputtext";
+import { Button } from "primereact/button";
+import { Message } from "primereact/message";
+import { Card } from "primereact/card";
+import { Divider } from "primereact/divider";
+import { ProgressSpinner } from "primereact/progressspinner";
+import { Book } from "../interfaces/Book";
 
 const SearchBook = () => {
   const { user } = useContext(AuthContext);
@@ -27,16 +25,15 @@ const SearchBook = () => {
 
   const navigate = useNavigate();
   const location = useLocation();
-  const listType =
-    location.state?.listType || console.log("Error: listType not defined");
+  const listType = location.state?.listType;
 
   const handleSave = async (selectedIndex: number) => {
-    if (!user) {
+    if (!user || !user.uid) {
       return;
     }
     setIsLoading(true);
 
-    let book = {
+    const book = {
       id: uuidv4(),
       title: results[selectedIndex].title,
       author: results[selectedIndex].author,
@@ -66,81 +63,91 @@ const SearchBook = () => {
     if (!res.error) {
       setResults(res);
     } else {
-      console.log(res.error);
+      console.error(res.error);
       setResults([]);
     }
-
     setIsLoading(false);
   };
 
   return (
-    <>
-      <Form>
-        <Form.Group className="mb-3 mt-3" controlId="formGroupTitle">
-          <Form.Label>Title</Form.Label>
-          <InputGroup>
-            <Form.Control
-              required
-              type="text"
-              placeholder="Title"
-              value={title}
-              onChange={(ev) => {
-                setTitle(ev.target.value);
-              }}
-            />
+    <Card className="p-shadow-6 p-p-4">
+      <h2>Search for a Book</h2>
+      <Divider />
+      <form>
+        <div className="p-field p-grid p-my-3">
+          <label htmlFor="title" className="p-col-12 p-md-2">
+            Title
+          </label>
+          <div className="p-col-12 p-md-8">
+            <span className="p-input-icon-right">
+              <i className="pi pi-search" />
+              <InputText
+                id="title"
+                type="text"
+                placeholder="Title"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+              />
+            </span>
             <Button
+              icon="pi pi-search"
+              label="Search"
+              className="p-ml-2"
               disabled={!title && !author && !isbn}
-              variant="outline-secondary"
-              onClick={() => {
-                fetchGoogleBooks();
-              }}
-            >
-              <i className="bi bi-search"></i>
-            </Button>
-          </InputGroup>
-        </Form.Group>
-        <Form.Group className="mb-3 mt-3" controlId="formGroupAuthor">
-          <Form.Label>Author</Form.Label>
-          <Form.Control
-            required
-            type="text"
-            placeholder="Author"
-            value={author}
-            onChange={(ev) => {
-              setAuthor(ev.target.value);
-            }}
-          />
-        </Form.Group>
-        <Form.Group className="mb-3 mt-3" controlId="formGroupIsbn">
-          <Form.Label>ISBN</Form.Label>
-          <Form.Control
-            required
-            type="text"
-            placeholder="ISBN"
-            value={isbn}
-            onChange={(ev) => {
-              setIsbn(ev.target.value);
-            }}
-          />
-        </Form.Group>
-      </Form>
+              onClick={fetchGoogleBooks}
+            />
+          </div>
+        </div>
+        <div className="p-field p-grid p-my-3">
+          <label htmlFor="author" className="p-col-12 p-md-2">
+            Author
+          </label>
+          <div className="p-col-12 p-md-8">
+            <InputText
+              id="author"
+              type="text"
+              placeholder="Author"
+              value={author}
+              onChange={(e) => setAuthor(e.target.value)}
+            />
+          </div>
+        </div>
+        <div className="p-field p-grid p-my-3">
+          <label htmlFor="isbn" className="p-col-12 p-md-2">
+            ISBN
+          </label>
+          <div className="p-col-12 p-md-8">
+            <InputText
+              id="isbn"
+              type="text"
+              placeholder="ISBN"
+              value={isbn}
+              onChange={(e) => setIsbn(e.target.value)}
+            />
+          </div>
+        </div>
+      </form>
       {errMsg && (
-        <Alert variant="danger" dismissible onClose={() => setErrMsg("")}>
-          {errMsg}
-        </Alert>
+        <Message
+          severity="error"
+          text={errMsg}
+          className="p-mt-3"
+          onClose={() => setErrMsg("")}
+        />
       )}
-      <Container>
-        {isLoading && <Spinner variant="success" />}
+      <Divider />
+      <div className="p-d-flex p-flex-column p-ai-center">
+        {isLoading && <ProgressSpinner />}
         {!isLoading &&
-          results.map((b, i) => (
+          results.map((book, i) => (
             <SearchResultRow
               key={i}
-              book={b}
+              book={book}
               handleSelected={() => handleSave(i)}
             />
           ))}
-      </Container>
-    </>
+      </div>
+    </Card>
   );
 };
 

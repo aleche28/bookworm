@@ -1,11 +1,13 @@
 import { useContext, useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { Button, Container, Spinner } from "react-bootstrap";
-import { BookCard } from "./BookCard";
+import { useNavigate } from "react-router-dom";
+import { Button } from "primereact/button";
+import { ProgressSpinner } from "primereact/progressspinner";
 import { AuthContext } from "../auth/AuthContext";
 import { listTypes, getList } from "../books";
-import * as React from "react";
 import { ListTypeKey } from "./BookList";
+import { BookCard } from "./BookCard";
+import { Book } from "../interfaces/Book";
+import { Carousel } from "primereact/carousel";
 
 const HomePage = () => {
   const { user } = useContext(AuthContext);
@@ -17,39 +19,18 @@ const HomePage = () => {
 
   const navigate = useNavigate();
 
-  async function fetchReadlist() {
-    if (!user) {
-      return;
-    }
-    try {
-      const list = await getList(user.uid, "read_books");
-      setReadlist(list);
-    } catch (err) {
-      setReadlist([]);
-    }
-  }
+  async function fetchList(
+    listType: ListTypeKey,
+    setList: (list: Book[]) => void
+  ) {
+    if (!user || !user.uid) return;
 
-  async function fetchReadinglist() {
-    if (!user) {
-      return;
-    }
     try {
-      const list = await getList(user.uid, "reading_books");
-      setReadinglist(list);
-    } catch (err) {
-      setReadinglist([]);
-    }
-  }
-
-  async function fetchToreadlist() {
-    if (!user) {
-      return;
-    }
-    try {
-      const list = await getList(user.uid, "toread_books");
-      setToreadlist(list);
-    } catch (err) {
-      setToreadlist([]);
+      const list = await getList(user.uid, listType);
+      setList(list);
+    } catch (err: unknown) {
+      console.error(err);
+      setList([]);
     }
   }
 
@@ -62,55 +43,87 @@ const HomePage = () => {
     } else if (!user.uid) {
       navigate("/login");
     } else {
-      fetchReadlist();
-      fetchReadinglist();
-      fetchToreadlist();
-      setLoading(false);
+      fetchList("read_books", setReadlist);
+      fetchList("reading_books", setReadinglist);
+      fetchList("toread_books", setToreadlist);
     }
+    setLoading(false);
     // eslint-disable-next-line
   }, [user]);
 
   const chooseListFromType = (type: ListTypeKey) => {
     if (type === "read_books") return readlist;
-    else if (type === "toread_books") return toreadlist;
-    else if (type === "reading_books") return readinglist;
-    else return [];
+    if (type === "toread_books") return toreadlist;
+    return readinglist;
   };
+
+  const bookTemplate = (b: Book) => {
+    return <BookCard book={b} />;
+  };
+
+  const responsiveOptions = [
+    {
+      breakpoint: "1400px",
+      numVisible: 7,
+      numScroll: 7,
+    },
+    {
+      breakpoint: "1199px",
+      numVisible: 5,
+      numScroll: 5,
+    },
+    {
+      breakpoint: "767px",
+      numVisible: 3,
+      numScroll: 3,
+    },
+    {
+      breakpoint: "575px",
+      numVisible: 1,
+      numScroll: 1,
+    },
+  ];
 
   return (
     <>
       {user?.uid && (
-        <>
+        <div className="p-mt-4">
           <h1>Welcome back!</h1>
           {Object.entries(listTypes).map(([listType, listName], i) => (
-            <Container key={i} className="book-cards-container">
-              <div className="book-cards-list-name">
-                <h2>{listName}</h2>
+            <div key={i} className="p-mb-4">
+              <div className="p-text-bold p-mb-2">
+                <h2>{listName as string}</h2>
+                <Button
+                  label="See all"
+                  text
+                  onClick={() =>
+                    navigate(`/${listType.slice(0, -"_books".length)}`)
+                  }
+                />
               </div>
               {loading ? (
-                <Container className="d-flex my-5 justify-content-left">
-                  <Spinner animation="border" role="status">
-                    <span className="visually-hidden">Loading...</span>
-                  </Spinner>
-                </Container>
+                <div className="p-d-flex p-jc-center p-my-5">
+                  <ProgressSpinner />
+                </div>
               ) : (
-                <>
-                  <div className="book-cards-row">
-                    {chooseListFromType(listType as ListTypeKey).map((b, i) => (
-                      <BookCard key={i} book={b} />
-                    ))}
-                    <Button
-                      onClick={() => navigate(`/${listType.slice(0, -"_books".length)}`)}
-                      variant="success"
-                    >
-                      +
-                    </Button>
-                  </div>
-                </>
+                <div className="p-grid p-align-center p-mb-3">
+                  {/* {chooseListFromType(listType as ListTypeKey).map((b, i) => (
+                    <BookCard key={i} book={b} />
+                  ))} */}
+                  <Carousel
+                    value={chooseListFromType(listType as ListTypeKey)}
+                    numVisible={7}
+                    numScroll={7}
+                    responsiveOptions={responsiveOptions}
+                    className="book-carousel"
+                    // circular
+                    itemTemplate={bookTemplate}
+                  />
+                </div>
               )}
-            </Container>
+            </div>
           ))}
-        </>
+        </div>
       )}
     </>
   );

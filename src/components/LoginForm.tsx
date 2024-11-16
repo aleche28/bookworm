@@ -1,8 +1,12 @@
 import { useState } from "react";
 import { googleLogin, login } from "../auth/auth";
-import { Alert, Button, Container, Form, Row } from "react-bootstrap";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { GoogleLoginButton } from "./GoogleLoginButton";
+import { Button } from "primereact/button";
+import { InputText } from "primereact/inputtext";
+import { Message } from "primereact/message";
+import { Divider } from "primereact/divider";
+import { Card } from "primereact/card";
 import * as React from "react";
 
 const LoginForm = () => {
@@ -14,107 +18,107 @@ const LoginForm = () => {
 
   const navigate = useNavigate();
 
-  const handleSubmit = async (e: any) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const form = e.currentTarget;
-    const isValid = form.checkValidity();
+
     setValidated(true);
-
-    if (!isValid) return;
-
     setErrMsg("");
+
+    if (!email || !password) {
+      setErrMsg("Please enter both email and password.");
+      return;
+    }
+
     const res = await login(email, password);
-    if (res === true) {
+    if (res.success) {
       navigate("/");
     } else {
-      setErrMsg(res.error || "Some error occurred while performing the login operation.");
+      setErrMsg(res.error || "An error occurred during login.");
     }
   };
 
-  const handleGoogleLogin = async (e: any) => {
+  const handleGoogleLogin = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
 
     const res = await googleLogin();
-    if (res === true) {
+    if (res.success) {
       navigate("/");
     } else {
-      setErrMsg(res.error || "Some error occurred while performing the login operation.");
+      setErrMsg(res.error || "An error occurred during login.");
     }
   };
 
   return (
-    <Container className="d-flex justify-content-center align-items-center vh-100">
-      <Container className="login-container border rounded px-4">
-        <Row>
-          <h1>Login</h1>
-        </Row>
+    <div className="p-d-flex p-jc-center p-ai-center vh-100">
+      <Card className="p-shadow-6 p-p-4" style={{ width: "400px" }}>
+        <div className="p-text-center">
+          <h2>Login</h2>
+        </div>
         {errMsg && (
-          <Alert key={"danger"} variant={"danger"}>
-            {errMsg}
-          </Alert>
+          <Message severity="error" text={errMsg} className="p-mt-3" />
         )}
-        <Form noValidate validated={validated} onSubmit={handleSubmit}>
-          <Form.Group className="mb-3 mt-3" controlId="formGroupUsername">
-            <Form.Label>Email</Form.Label>
-            <Form.Control
-              required
+        <form onSubmit={handleSubmit} noValidate>
+          <div className="p-field p-my-4">
+            <label htmlFor="email">Email</label>
+            <InputText
+              id="email"
               type="email"
               placeholder="Enter email"
               value={email}
-              onChange={(ev) => {
-                setEmail(ev.target.value);
-              }}
-            />
-            <Form.Control.Feedback type="invalid">
-              Please enter an email.
-            </Form.Control.Feedback>
-          </Form.Group>
-          <Form.Group className="mb-3 mt-3" controlId="formGroupPassword">
-            <Form.Label>Password</Form.Label>
-            <Form.Control
+              onChange={(e) => setEmail(e.target.value)}
               required
-              type={showPassword ? "text" : "password"}
-              placeholder="Password"
-              value={password}
-              onChange={(ev) => {
-                setPassword(ev.target.value);
-              }}
+              className={validated && !email ? "p-invalid" : ""}
             />
-            <div className="over-password">
-              <i
-                id="toggle-password"
-                className={
-                  showPassword ? "bi bi-eye-slash-fill" : "bi bi-eye-fill"
-                }
-                onClick={() => setShowPassword(!showPassword)}
-              ></i>
-            </div>
-            <Form.Control.Feedback type="invalid">
-              Please enter a password.
-            </Form.Control.Feedback>
-          </Form.Group>
-
-          <div className="d-grid gap-2">
-            <Button className="mb-3 mt-0" variant="primary" type="submit">
-              Login
-            </Button>
+            {validated && !email && (
+              <small className="p-error">Please enter an email.</small>
+            )}
           </div>
-          <div className="below-button">
+          <div className="p-field p-my-4">
+            <label htmlFor="password">Password</label>
+            <span className="p-input-icon-right">
+              <i
+                className={`pi ${showPassword ? "pi-eye-slash" : "pi-eye"}`}
+                onClick={() => setShowPassword(!showPassword)}
+                style={{ cursor: "pointer" }}
+              />
+              <InputText
+                id="password"
+                type={showPassword ? "text" : "password"}
+                placeholder="Password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+                className={validated && !password ? "p-invalid" : ""}
+              />
+            </span>
+            {validated && !password && (
+              <small className="p-error">Please enter a password.</small>
+            )}
+          </div>
+
+          <Button
+            type="submit"
+            label="Login"
+            className="p-button-primary p-mb-3"
+            style={{ width: "100%" }}
+          />
+
+          <div className="p-text-center p-mb-3">
             <small>
-              Not registered yet? <Link to={"/signup"}>Sign up now</Link>
+              Not registered yet? <Link to="/signup">Sign up now</Link>
             </small>
           </div>
-          <div className="divider">OR</div>
-          <div className="d-grid gap-2">
-            {/* <Button variant="outline-secondary" onClick={handleGoogleLogin}>
-              <i className="bi bi-google" /> <span>Sign in with Google</span>
-              <a href="https://www.flaticon.com/free-icons/google" title="google icons">Google icons created by Freepik - Flaticon</a>
-            </Button> */}
+
+          <Divider align="center">
+            <span>OR</span>
+          </Divider>
+
+          <div className="p-mt-3">
             <GoogleLoginButton handleGoogleLogin={handleGoogleLogin} />
           </div>
-        </Form>
-      </Container>
-    </Container>
+        </form>
+      </Card>
+    </div>
   );
 };
 

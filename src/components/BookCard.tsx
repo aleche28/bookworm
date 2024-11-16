@@ -1,9 +1,9 @@
-import * as React from "react";
+import { Book } from "../interfaces/Book";
 
 const defaultImg = "sapiens-cover.jpeg";
 
 interface BookCardProps {
-  book: Book
+  book: Book;
 }
 
 const BookCard = ({ book }: BookCardProps) => {

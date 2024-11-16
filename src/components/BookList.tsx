@@ -1,17 +1,19 @@
 import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../auth/AuthContext";
 import { getList, listTypes, updateList } from "../books";
-import { Alert, Button, Col, Container, Spinner } from "react-bootstrap";
+import { Button } from "primereact/button";
+import { Message } from "primereact/message";
+import { ProgressSpinner } from "primereact/progressspinner";
 import { useLocation, useNavigate } from "react-router-dom";
 import { AddEditForm } from "./AddEditForm";
 import { BookRow } from "./BookRow";
-import * as React from "react";
+import { Book } from "../interfaces/Book";
 
 type ListTypeKey = "toread_books" | "read_books" | "reading_books";
 
 interface BookListProps {
-  listType: ListTypeKey,
-  listName: string
+  listType: ListTypeKey;
+  listName: string;
 }
 
 const BookList = (props: BookListProps) => {
@@ -38,7 +40,7 @@ const BookList = (props: BookListProps) => {
         const list = await getList(user.uid, props.listType);
         setErrMsg("");
         setBooks(list);
-      } catch (err) {
+      } catch (err: any) {
         setErrMsg(err.message);
       } finally {
         setLoading(false);
@@ -53,7 +55,7 @@ const BookList = (props: BookListProps) => {
 
   // TODO: Update this to delete based on book uuid and not based on book position
   const handleDelete = async (index: number) => {
-    if (!user) {
+    if (!user || !user.uid) {
       return;
     }
     const newlist: Book[] = [];
@@ -67,7 +69,7 @@ const BookList = (props: BookListProps) => {
   };
 
   const handleUpdate = async (id: number, book: Book, showMsg = true) => {
-    if (!user) {
+    if (!user || !user.uid) {
       return;
     }
     // temp implementation: old book is deleted and new book is added
@@ -85,48 +87,40 @@ const BookList = (props: BookListProps) => {
   };
 
   return (
-    <>
+    <div className="p-grid p-justify-center">
       {errMsg && (
-        <Alert
-          key={"danger"}
-          variant="danger"
+        <Message
+          severity="error"
+          text={errMsg}
           onClose={() => setErrMsg("")}
-          dismissible
-        >
-          {errMsg}
-        </Alert>
+          closable
+          className="p-mb-3"
+        />
       )}
       {infoMsg && (
-        <Alert
-          key={"success"}
-          variant="success"
+        <Message
+          severity="success"
+          text={infoMsg}
           onClose={() => setInfoMsg("")}
-          dismissible
-        >
-          {infoMsg}
-        </Alert>
+          closable
+          className="p-mb-3"
+        />
       )}
 
-      {loading && (
-        <Col lg={10}>
-          <Container className="d-flex my-5 justify-content-center">
-            <Spinner animation="border" role="status">
-              <span className="visually-hidden">Loading...</span>
-            </Spinner>
-          </Container>
-        </Col>
-      )}
-
-      {user?.uid && !loading && (
-        <>
-          <h2 className="list-name">{listTypes[props.listType]}</h2>
-          <Col lg={10} className="book-rows-container">
-            {books.map((b, i) => {
-              if (editBook && editIndex === i)
-                return (
-                  <Container
+      {loading ? (
+        <div className="p-col-12 p-mt-5 p-d-flex p-jc-center">
+          <ProgressSpinner />
+        </div>
+      ) : (
+        user?.uid && (
+          <div className="p-col-10">
+            <h2 className="list-name">{listTypes[props.listType]}</h2>
+            <div className="book-rows-container">
+              {books.map((b, i) =>
+                editBook && editIndex === i ? (
+                  <div
                     key={i}
-                    className="book-add-form my-3 py-3 px-5 border rounded"
+                    className="book-add-form p-mt-3 p-mb-3 p-p-3 p-border-round p-shadow-1"
                   >
                     <AddEditForm
                       edit={true}
@@ -137,10 +131,8 @@ const BookList = (props: BookListProps) => {
                       }}
                       book={b}
                     />
-                  </Container>
-                );
-              else
-                return (
+                  </div>
+                ) : (
                   <BookRow
                     key={i}
                     id={i}
@@ -154,24 +146,26 @@ const BookList = (props: BookListProps) => {
                       setEditBook(true);
                     }}
                   />
-                );
-            })}
+                )
+              )}
 
-            <Button
-              variant="success"
-              onClick={() =>
-                navigate("/search", {
-                  state: { listType: props.listType },
-                })
-              }
-            >
-              <i className="bi bi-plus"></i>
-            </Button>
-          </Col>
-        </>
+              <Button
+                icon="pi pi-plus"
+                label="Add Book"
+                className="p-button-success p-mt-3"
+                onClick={() =>
+                  navigate("/search", {
+                    state: { listType: props.listType },
+                  })
+                }
+              />
+            </div>
+          </div>
+        )
       )}
-    </>
+    </div>
   );
 };
 
-export { BookList, ListTypeKey };
+export { BookList };
+export type { ListTypeKey };

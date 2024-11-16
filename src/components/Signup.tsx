@@ -1,7 +1,12 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { signUp } from "../auth/auth";
-import { Container, Row, Form, Button, Alert } from "react-bootstrap";
+import { Card } from "primereact/card";
+import { Button } from "primereact/button";
+import { InputText } from "primereact/inputtext";
+import { Password } from "primereact/password";
+import { Message } from "primereact/message";
+import { Divider } from "primereact/divider";
 import * as React from "react";
 
 const Signup = () => {
@@ -13,12 +18,12 @@ const Signup = () => {
 
   const navigate = useNavigate();
 
-  const handleSubmit = async (e: any) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (password !== password2) {
       setErrMsg("Passwords do not match");
     } else {
-      const form = e.currentTarget;
+      const form = e.currentTarget as HTMLFormElement;
       const isValid = form.checkValidity();
       setValidated(true);
 
@@ -26,84 +31,74 @@ const Signup = () => {
 
       setErrMsg("");
       const res = await signUp(email, password);
-      if (res === true) {
+      if (res.success) {
         navigate("/");
       } else {
-        setErrMsg(res.error || "Some error occurred while performing the signup operation.");
+        setErrMsg(
+          res.error ||
+            "Some error occurred while performing the signup operation."
+        );
       }
     }
   };
 
   return (
-    <Container className="d-flex justify-content-center align-items-center vh-100">
-      <Container className="login-container border rounded px-4">
-        <Row>
-          <h1>Sign up</h1>
-        </Row>
+    <div className="p-d-flex p-ai-center p-jc-center p-mt-5">
+      <Card className="p-shadow-5 p-p-4" style={{ width: "300px" }}>
+        <h2>Sign Up</h2>
+        <Divider />
         {errMsg && (
-          <Alert key={"danger"} variant={"danger"}>
-            {errMsg}
-          </Alert>
+          <Message severity="error" text={errMsg} className="p-mb-3" />
         )}
-        <Form noValidate validated={validated} onSubmit={handleSubmit}>
-          <Form.Group className="mb-3 mt-3" controlId="formGroupUsername">
-            <Form.Label>Email</Form.Label>
-            <Form.Control
-              required
+        <form
+          noValidate
+          validated={validated.toString()}
+          onSubmit={handleSubmit}
+        >
+          <div className="p-field p-my-3">
+            <label htmlFor="email">Email</label>
+            <InputText
+              id="email"
               type="email"
               placeholder="Enter email"
               value={email}
-              onChange={(ev) => {
-                setEmail(ev.target.value);
-              }}
-            />
-            <Form.Control.Feedback type="invalid">
-              Please enter an email.
-            </Form.Control.Feedback>
-          </Form.Group>
-          <Form.Group className="mb-3 mt-3" controlId="formGroupPassword">
-            <Form.Label>Password</Form.Label>
-            <Form.Control
+              onChange={(e) => setEmail(e.target.value)}
               required
-              type="password"
+            />
+          </div>
+          <div className="p-field p-my-3">
+            <label htmlFor="password">Password</label>
+            <Password
+              id="password"
               placeholder="Password"
               value={password}
-              onChange={(ev) => {
-                setPassword(ev.target.value);
-              }}
-            />
-            <Form.Control.Feedback type="invalid">
-              Please enter a password.
-            </Form.Control.Feedback>
-          </Form.Group>
-          <Form.Group className="mb-3 mt-3" controlId="formGroupPassword2">
-            <Form.Label>Confirm password</Form.Label>
-            <Form.Control
+              onChange={(e) => setPassword(e.target.value)}
               required
-              type="password"
+              toggleMask
+            />
+          </div>
+          <div className="p-field p-my-3">
+            <label htmlFor="password2">Confirm Password</label>
+            <Password
+              id="password2"
               placeholder="Confirm password"
               value={password2}
-              onChange={(ev) => {
-                setPassword2(ev.target.value);
-              }}
+              onChange={(e) => setPassword2(e.target.value)}
+              required
+              toggleMask
             />
-            <Form.Control.Feedback type="invalid">
-              Please enter a password.
-            </Form.Control.Feedback>
-          </Form.Group>
-          <div className="d-grid gap-2">
-            <Button className="mb-3 mt-3" variant="primary" type="submit">
-              Sign up
-            </Button>
           </div>
-          <div className="below-button">
-            <small>
-              Already registered? <Link to={"/login"}>Login now</Link>
-            </small>
-          </div>
-        </Form>
-      </Container>
-    </Container>
+          <Button
+            label="Sign Up"
+            type="submit"
+            className="p-button p-button-success p-my-3"
+          />
+        </form>
+        <small className="p-d-block p-mt-2">
+          Already registered? <Link to="/login">Login now</Link>
+        </small>
+      </Card>
+    </div>
   );
 };
 

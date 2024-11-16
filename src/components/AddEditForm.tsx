@@ -1,15 +1,17 @@
 import { useState } from "react";
-import { Button, Col, Form, InputGroup, Row } from "react-bootstrap";
-import { searchBook } from "../utils/googleBooks";
-import * as React from "react";
+import { searchBook } from "../utils/googleBooks.js";
+import { Button } from "primereact/button";
+import { InputText } from "primereact/inputtext";
+import { Dropdown } from "primereact/dropdown";
+import { Book } from "../interfaces/Book.js";
 
 interface AddEditFormProps {
-  book: Book,
-  edit: boolean,
-  handleUpdate: (b: Book) => void,
-  cancelEditBook: () => void,
-  handleAdd?: (b: Book) => void,
-  setAddBook?: (val: boolean) => void
+  book: Book;
+  edit: boolean;
+  handleUpdate: (b: Book) => void;
+  cancelEditBook: () => void;
+  handleAdd?: (b: Book) => void;
+  setAddBook?: (val: boolean) => void;
 }
 
 const AddEditForm = (props: AddEditFormProps) => {
@@ -19,9 +21,9 @@ const AddEditForm = (props: AddEditFormProps) => {
   const [googleBooksResults, setGoogleBooksResults] = useState<Book[]>([]);
   const [selectedIndex, setSelectedIndex] = useState<number>(-1);
 
-  const handleSave = (event) => {
+  const handleSave = (event: any) => {
     event.preventDefault();
-    let book = {
+    const book = {
       ...props.book, // edited fields will be overwritten
       title,
       author,
@@ -31,21 +33,25 @@ const AddEditForm = (props: AddEditFormProps) => {
     if (selectedIndex !== -1) {
       const { googleBooksId, imageLinks } = googleBooksResults[selectedIndex];
       book.googleBooksId = googleBooksId;
-      imageLinks && (book.imageLinks = imageLinks); // if imageLinks is undefined, the field is not added to the object
+      if (imageLinks !== undefined) {
+        book.imageLinks = imageLinks;
+      }
     }
 
     // props.edit ? props.handleUpdate(book) : props.handleAdd(book);
-    props.edit && props.handleUpdate(book)
+    if (props.edit) {
+      props.handleUpdate(book);
+    }
   };
 
   const fetchGoogleBooks = async () => {
     setSelectedIndex(-1);
     const res = await searchBook(title, author);
-    if (!res.error) setGoogleBooksResults(res);
+    if (!res.error) setGoogleBooksResults(res.books || []);
     else setGoogleBooksResults([]);
   };
 
-  const handleSelectChange = (event) => {
+  const handleSelectChange = (event: any) => {
     event.preventDefault();
     const selectedOption = event.target.value;
     setSelectedIndex(selectedOption);
@@ -57,13 +63,12 @@ const AddEditForm = (props: AddEditFormProps) => {
   return (
     <>
       {
-        <Form onSubmit={handleSave}>
-          <Form.Group className="mb-3 mt-3" controlId="formGroupTitle">
-            <Form.Label>Title</Form.Label>
-            <InputGroup>
-              <Form.Control
+        <form onSubmit={handleSave}>
+          <div className="p-field">
+            <label htmlFor="title">Title</label>
+            <div className="p-inputgroup">
+              <InputText
                 required
-                type="text"
                 placeholder="Title"
                 value={title}
                 onChange={(ev) => {
@@ -72,66 +77,53 @@ const AddEditForm = (props: AddEditFormProps) => {
               />
               <Button
                 disabled={!title}
-                variant="outline-secondary"
+                icon="bi bi-search"
                 onClick={() => {
                   fetchGoogleBooks();
                   setShowDropdown(true);
                 }}
-              >
-                <i className="bi bi-search"></i>
-              </Button>
-            </InputGroup>
-          </Form.Group>
+              />
+            </div>
+          </div>
           {showDropdown && (
-            <Form.Control
-              as="select"
-              aria-label="Select book from Google books"
-              defaultValue={selectedIndex}
+            <Dropdown
+              placeholder="Select book from Google Books"
+              value={selectedIndex}
               onChange={handleSelectChange}
-            >
-              {googleBooksResults.map((b, i) => (
-                <option key={i} value={i}>
-                  {b.title} - {b.author}
-                </option>
-              ))}
-            </Form.Control>
+              options={googleBooksResults.map((b, i) => ({
+                label: `${b.title} - ${b.author}`,
+                value: i,
+              }))}
+            />
           )}
 
-          <Form.Group className="mb-3 mt-3" controlId="formGroupAuthor">
-            <Form.Label>Author</Form.Label>
-            <Form.Control
+          <div className="p-field">
+            <label htmlFor="author">Author</label>
+            <InputText
               required
-              type="text"
               placeholder="Author"
               value={author}
               onChange={(ev) => {
                 setAuthor(ev.target.value);
               }}
             />
-          </Form.Group>
-          <Row>
-            <Col xs={2}></Col>
-            <Button
-              disabled={!title || !author}
-              className="col-3 mb-3 mt-3"
-              variant="success"
-              type="submit"
-            >
-              Save
-            </Button>
-            <Col xs={2}></Col>
-            <Button
-              className="col-3 mb-3 mt-3"
-              variant="secondary"
-              onClick={() =>
-                // props.edit ? props.cancelEditBook() : props.setAddBook?(false)
-                props.edit && props.cancelEditBook()
-              }
-            >
-              Cancel
-            </Button>
-          </Row>
-        </Form>
+          </div>
+
+          <div className="p-grid">
+            <div className="p-col-12 p-md-3 p-mb-2">
+              <Button label="Save" disabled={!title || !author} type="submit" />
+            </div>
+            <div className="p-col-12 p-md-3 p-mb-2">
+              <Button
+                label="Cancel"
+                onClick={() =>
+                  // props.edit ? props.cancelEditBook() : props.setAddBook?(false)
+                  props.edit && props.cancelEditBook()
+                }
+              />
+            </div>
+          </div>
+        </form>
       }
     </>
   );

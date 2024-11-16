@@ -1,10 +1,13 @@
 import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../auth/AuthContext";
-import { Alert, Col, Container, Spinner } from "react-bootstrap";
 import { BookRow } from "./BookRow";
 import { getFavorites, getList, updateList } from "../books";
 import { useNavigate } from "react-router-dom";
+import { Toast } from "primereact/toast";
+import { ProgressSpinner } from "primereact/progressspinner";
+import { Card } from "primereact/card";
 import * as React from "react";
+import { Book } from "../interfaces/Book";
 
 const FavoritesPage = () => {
   const { user } = useContext(AuthContext);
@@ -14,6 +17,7 @@ const FavoritesPage = () => {
   const [infoMsg, setInfoMsg] = useState("");
   const [books, setBooks] = useState<Book[]>([]);
 
+  const toast = React.useRef<any>(null);
   const navigate = useNavigate();
 
   async function fetchBooks() {
@@ -27,7 +31,7 @@ const FavoritesPage = () => {
         const list = await getFavorites(user.uid);
         setErrMsg("");
         setBooks(list);
-      } catch (err) {
+      } catch (err: any) {
         setErrMsg(err.message);
       } finally {
         setLoading(false);
@@ -41,12 +45,12 @@ const FavoritesPage = () => {
   }, [user]);
 
   async function handleUpdate(book: Book) {
-    if (!user) {
+    if (!user || !user.uid) {
       return;
     }
-    const list = await getList(user.uid, book.list); // list from where the book is located (to read, read, reading)
+    const list = await getList(user.uid, book.list);
     const newlist: Book[] = [];
-    list.map((b) => {
+    list.map((b: Book) => {
       if (b.id !== undefined && b.id !== book.id) newlist.push(b);
       else newlist.push(book);
       return null;
@@ -57,50 +61,45 @@ const FavoritesPage = () => {
 
   return (
     <>
-      {errMsg && (
-        <Alert
-          key={"danger"}
-          variant="danger"
-          onClose={() => setErrMsg("")}
-          dismissible
-        >
-          {errMsg}
-        </Alert>
-      )}
-      {infoMsg && (
-        <Alert
-          key={"success"}
-          variant="success"
-          onClose={() => setInfoMsg("")}
-          dismissible
-        >
-          {infoMsg}
-        </Alert>
-      )}
+      <Toast ref={toast} />
+      {errMsg &&
+        toast.current?.show({
+          severity: "error",
+          summary: "Error",
+          detail: errMsg,
+          life: 3000,
+        })}
+      {infoMsg &&
+        toast.current?.show({
+          severity: "info",
+          summary: "Info",
+          detail: infoMsg,
+          life: 3000,
+        })}
 
       {user?.uid && (
         <>
           <h2>Favorites</h2>
           {loading ? (
-            <Container className="d-flex my-5 justify-content-left">
-              <Spinner animation="border" role="status">
-                <span className="visually-hidden">Loading...</span>
-              </Spinner>
-            </Container>
+            <div className="p-d-flex p-jc-start p-my-5">
+              <ProgressSpinner />
+            </div>
           ) : (
             <>
               {books.length > 0 ? (
-                <Col lg={8} className="book-rows-container">
+                <div className="p-grid p-justify-center book-rows-container">
                   {books.map((b, i) => (
-                    <BookRow
-                      key={i}
-                      id={i}
-                      book={b}
-                      favoritesPage={true}
-                      handleUpdate={handleUpdate}
-                    />
+                    <Card key={i} className="p-col-12 p-md-8 p-lg-6">
+                      <BookRow
+                        key={i}
+                        id={i}
+                        book={b}
+                        favoritesPage={true}
+                        handleUpdate={handleUpdate}
+                      />
+                    </Card>
                   ))}
-                </Col>
+                </div>
               ) : (
                 <span>You don't have any favorite book yet.</span>
               )}

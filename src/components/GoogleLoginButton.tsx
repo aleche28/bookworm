@@ -1,7 +1,5 @@
-import * as React from "react";
-
 interface GoogleLoginButtonProps {
-  handleGoogleLogin: (event: any) => void
+  handleGoogleLogin: (event: any) => void;
 }
 
 /* Following google guidelines: https://developers.google.com/identity/branding-guidelines */
