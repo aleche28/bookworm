@@ -27,8 +27,8 @@ import "primereact/resources/primereact.min.css"; // core css
 import "primeicons/primeicons.css"; // icons
 import "primeflex/primeflex.css"; // flex
 import { ToastContextProvider } from "./toast-context";
-import { Menu } from 'primereact/menu';
-import { Avatar } from 'primereact/avatar';
+import { Menu } from "primereact/menu";
+import { Avatar } from "primereact/avatar";
 
 function App() {
   return (
@@ -40,7 +40,9 @@ function App() {
               <Route index element={<HomePage />} />
               <Route
                 path="toread"
-                element={<BookList listType="toread_books" listName="To read" />}
+                element={
+                  <BookList listType="toread_books" listName="To read" />
+                }
               />
               <Route
                 path="read"
@@ -48,7 +50,9 @@ function App() {
               />
               <Route
                 path="reading"
-                element={<BookList listType="reading_books" listName="Reading" />}
+                element={
+                  <BookList listType="reading_books" listName="Reading" />
+                }
               />
               <Route path="favorites" element={<FavoritesPage />} />
               <Route path="login" element={<LoginForm />} />
@@ -84,7 +88,7 @@ function MainLayout() {
   const startMenuItems = (
     <>
       <Button
-        icon={FaWorm}
+        icon={() => <FaWorm />}
         label="Bookworm"
         onClick={() => navigate("/")}
         text
@@ -116,22 +120,29 @@ function MainLayout() {
 
   const userMenuItems = [
     {
-      template: (item, options) => {
+      template: () => {
+        const image = user?.uid ? user.photoURL : "";
         return (
           <div className="flex flex-row justify-content-center align-items-center">
-            <Avatar image={user?.uid ? user.photoURL : ""} className="mr-2" shape="circle" />
-            <span className="font-bold">{user?.uid ? user.displayName : "Unknown"}</span>
+            <Avatar
+              image={image || undefined}
+              className="mr-2"
+              shape="circle"
+            />
+            <span className="font-bold">
+              {user?.uid ? user.displayName : "Unknown"}
+            </span>
           </div>
         );
-      }
+      },
     },
     {
-      separator: true
+      separator: true,
     },
     {
-      label: 'Logout',
-      icon: 'pi pi-sign-out',
-      command: () => handleLogout()
+      label: "Logout",
+      icon: "pi pi-sign-out",
+      command: () => handleLogout(),
     },
   ];
 

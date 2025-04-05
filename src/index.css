@@ -61,11 +61,6 @@ code {
   /* padding: 1rem 0.2rem; */
 }
 
-.book-row:hover {
-  /* cursor: pointer; */
-  /* background-color: rgb(229, 253, 222); */
-}
-
 .book-row-thumbnail {
   display: flex;
   justify-content: space-evenly;
@@ -127,8 +122,8 @@ code {
   border: none;
 }
 
-#dropdown-more-btn::after { 
-  content: none; 
+#dropdown-more-btn::after {
+  content: none;
 }
 
 .favorite-heart-empty:hover {

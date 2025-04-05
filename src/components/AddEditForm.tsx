@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState } from "react";
 import { searchBook } from "../utils/googleBooks.js";
 import { Button } from "primereact/button";

@@ -6,13 +6,13 @@ import { Button } from "primereact/button";
 import { Card } from "primereact/card";
 import { ProgressSpinner } from "primereact/progressspinner";
 import { Book } from "../interfaces/Book";
-import { FloatLabel } from 'primereact/floatlabel';
+import { FloatLabel } from "primereact/floatlabel";
 import { BookRow } from "./BookRow";
 import { useNavigate } from "react-router-dom";
 import { ListTypeKey } from "./BookList";
 import { getList } from "../books";
-import { Dialog } from 'primereact/dialog';
-import { BarcodeScanner } from 'react-barcode-scanner'
+import { Dialog } from "primereact/dialog";
+import { BarcodeScanner } from "react-barcode-scanner";
 
 const SearchBook = () => {
   const { user } = useContext(AuthContext);
@@ -34,14 +34,26 @@ const SearchBook = () => {
     setIsLoading(true);
     const res = await searchBook(title, author, isbn);
     if (!res.error) {
-      const resList = res.books?.map(b => {
-        if (readlist.find(readBook => readBook.googleBooksId === b.googleBooksId)) {
+      const resList = res.books?.map((b) => {
+        if (
+          readlist.find(
+            (readBook) => readBook.googleBooksId === b.googleBooksId
+          )
+        ) {
           return { ...b, list: "read_books" };
         }
-        if (readinglist.find(readingBook => readingBook.googleBooksId === b.googleBooksId)) {
+        if (
+          readinglist.find(
+            (readingBook) => readingBook.googleBooksId === b.googleBooksId
+          )
+        ) {
           return { ...b, list: "reading_books" };
         }
-        if (toreadlist.find(toReadBook => toReadBook.googleBooksId === b.googleBooksId)) {
+        if (
+          toreadlist.find(
+            (toReadBook) => toReadBook.googleBooksId === b.googleBooksId
+          )
+        ) {
           return { ...b, list: "toread_books" };
         }
         return b;
@@ -69,15 +81,16 @@ const SearchBook = () => {
     }
   }
 
-  const onBarCodeCapture = (ev) => {
+  const onBarCodeCapture = (ev: { rawValue: string | undefined }[]) => {
     const scannedIsbn = ev[0].rawValue;
     if (!scannedIsbn) {
       console.error("Scanned invalid ISBN");
+      return;
     }
 
     setIsbn(scannedIsbn);
     setScanDialogVisible(false);
-  }
+  };
 
   useEffect(() => {
     setIsLoading(true);
@@ -124,7 +137,10 @@ const SearchBook = () => {
               value={isbn}
               onChange={(e) => setIsbn(e.target.value)}
             />
-            <Button icon="pi pi-barcode" onClick={() => setScanDialogVisible(true)} />
+            <Button
+              icon="pi pi-barcode"
+              onClick={() => setScanDialogVisible(true)}
+            />
           </div>
           <label htmlFor="isbn">ISBN</label>
         </FloatLabel>
@@ -139,18 +155,37 @@ const SearchBook = () => {
       </Card>
       <div className="my-5">
         {isLoading && <ProgressSpinner />}
-        {!isLoading && results &&
+        {!isLoading && results && (
           <div>
             <h2>Results</h2>
             {results.map((book) => (
-              <BookRow key={book.googleBooksId} book={book} id={0} showBookListTag={true} handleUpdate={(b) => { console.log(b) }} />
+              <BookRow
+                key={book.googleBooksId}
+                book={book}
+                id={0}
+                showBookListTag={true}
+                handleUpdate={(b) => {
+                  console.log(b);
+                }}
+              />
             ))}
-            {results.length === 0 &&
-              <p>No book found.</p>}
-          </div>}
+            {results.length === 0 && <p>No book found.</p>}
+          </div>
+        )}
       </div>
-      <Dialog header="Header" visible={scanDialogVisible} style={{ width: '20rem' }} onHide={() => { if (!scanDialogVisible) return; setScanDialogVisible(false); }}>
-        <BarcodeScanner options={{ formats: ["ean_13", "ean_8"] }} onCapture={onBarCodeCapture} />
+      <Dialog
+        header="Header"
+        visible={scanDialogVisible}
+        style={{ width: "20rem" }}
+        onHide={() => {
+          if (!scanDialogVisible) return;
+          setScanDialogVisible(false);
+        }}
+      >
+        <BarcodeScanner
+          options={{ formats: ["ean_13", "ean_8"] }}
+          onCapture={onBarCodeCapture}
+        />
       </Dialog>
     </div>
   );

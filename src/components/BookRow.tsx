@@ -21,16 +21,16 @@ interface BookRowProps {
 
 const BookRow = (props: BookRowProps) => {
   const { user } = useContext(AuthContext);
-  const menu = useRef<any>(null);
+  const menu = useRef<Menu>(null);
 
   const [isMobile, setIsMobile] = useState(
     window.matchMedia("(max-width: 768px)").matches
-  )
+  );
 
   useEffect(() => {
     window
       .matchMedia("(max-width: 768px)")
-      .addEventListener('change', e => setIsMobile(e.matches));
+      .addEventListener("change", (e) => setIsMobile(e.matches));
   }, []);
 
   const moveToList = async (destList: ListTypeKey) => {
@@ -56,30 +56,30 @@ const BookRow = (props: BookRowProps) => {
   const menuItems = [
     ...(props.list !== "reading_books"
       ? [
-        {
-          label: "Mark as reading",
-          icon: "pi pi-book",
-          command: () => moveToList("reading_books"),
-        },
-      ]
+          {
+            label: "Mark as reading",
+            icon: "pi pi-book",
+            command: () => moveToList("reading_books"),
+          },
+        ]
       : []),
     ...(props.list !== "toread_books"
       ? [
-        {
-          label: "Mark as to read",
-          icon: "pi pi-bookmark",
-          command: () => moveToList("toread_books"),
-        },
-      ]
+          {
+            label: "Mark as to read",
+            icon: "pi pi-bookmark",
+            command: () => moveToList("toread_books"),
+          },
+        ]
       : []),
     ...(props.list !== "read_books"
       ? [
-        {
-          label: "Mark as read",
-          icon: "pi pi-check",
-          command: () => moveToList("read_books"),
-        },
-      ]
+          {
+            label: "Mark as read",
+            icon: "pi pi-check",
+            command: () => moveToList("read_books"),
+          },
+        ]
       : []),
   ];
 
@@ -87,7 +87,10 @@ const BookRow = (props: BookRowProps) => {
     menuItems.push({
       label: "Remove book from list",
       icon: "pi pi-trash",
-      command: () => props.handleRemoveFromList && props.handleRemoveFromList(props.id),
+      command: () => {
+        props.handleRemoveFromList?.(props.id);
+        return Promise.resolve();
+      },
     });
   }
 
@@ -95,12 +98,19 @@ const BookRow = (props: BookRowProps) => {
     menuItems.push({
       label: props.book.favorite ? "Remove from favorites" : "Add to favorites",
       icon: props.book.favorite ? "pi pi-heart-fill" : "pi pi-heart",
-      command: () => updateFavorite(!props.book.favorite),
+      command: () => {
+        updateFavorite(!props.book.favorite);
+        return Promise.resolve();
+      },
     });
   }
 
   return (
-    <Card title={isMobile ? props.book.title : undefined} subTitle={isMobile ? props.book.author : undefined} className="p-0 m-1">
+    <Card
+      title={isMobile ? props.book.title : undefined}
+      subTitle={isMobile ? props.book.author : undefined}
+      className="p-0 m-1"
+    >
       <div className="book-row">
         <img
           src={props.book.imageLinks?.thumbnail || "sapiens-cover.jpeg"}
@@ -108,18 +118,18 @@ const BookRow = (props: BookRowProps) => {
           className="book-row-thumbnail"
         />
 
-        {!isMobile &&
-          <div className="px-4"
-          >
+        {!isMobile && (
+          <div className="px-4">
             <div className="book-row-title">{props.book.title}</div>
             <div className="book-row-author">{props.book.author}</div>
-          </div>}
+          </div>
+        )}
 
         {props.showBookListTag && props.book.list && (
           <Tag value={listTypes[props.book.list]} />
         )}
 
-        {props.showFavoriteButton &&
+        {props.showFavoriteButton && (
           <div className="p-col-fixed p-mx-1" id={`favorite-${props.id}`}>
             <Button
               icon={props.book.favorite ? "pi pi-heart-fill" : "pi pi-heart"}
@@ -128,7 +138,8 @@ const BookRow = (props: BookRowProps) => {
               severity={props.book.favorite ? "success" : "secondary"}
               onClick={() => updateFavorite(!props.book.favorite)}
             />
-          </div>}
+          </div>
+        )}
 
         <div className="p-col-fixed p-mx-1">
           <Button
@@ -136,7 +147,7 @@ const BookRow = (props: BookRowProps) => {
             rounded
             text
             severity="secondary"
-            onClick={(event) => menu.current.toggle(event)}
+            onClick={(event) => menu.current?.toggle(event)}
           />
           <Menu model={menuItems} popup ref={menu} id="book-menu" />
         </div>

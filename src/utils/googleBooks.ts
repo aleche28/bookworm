@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 // src/googleBooks.ts
 
 import { Book } from "../interfaces/Book";
@@ -28,29 +29,32 @@ const searchBook = async (
       if (list.totalItems === 0) return { books: [] };
       // sometimes results have duplicate elements (same book but different etags that represents the resource version in the api)
       const foundIds = new Map();
-      const books = list.items.map((b: RawGoogleBook): Book | null => {
-        if (foundIds.has(b.id)) {
-          return null;
-        }
-        foundIds.set(b.id, true);
+      const books = list.items
+        .map((b: RawGoogleBook): Book | null => {
+          if (foundIds.has(b.id)) {
+            return null;
+          }
+          foundIds.set(b.id, true);
 
-        const temp: Book = {
-          title: b.volumeInfo.title,
-          author: b.volumeInfo.authors?.[0] || "Unknown author",
-          googleBooksId: b.id,
-          imageLinks: b.volumeInfo.imageLinks,
-          isbnCodes: b.volumeInfo.industryIdentifiers,
-          id: undefined,
-          favorite: false,
-          list: undefined
-        };
+          const temp: Book = {
+            title: b.volumeInfo.title,
+            author: b.volumeInfo.authors?.[0] || "Unknown author",
+            googleBooksId: b.id,
+            imageLinks: b.volumeInfo.imageLinks,
+            isbnCodes: b.volumeInfo.industryIdentifiers,
+            id: undefined,
+            favorite: false,
+            list: undefined,
+          };
 
-        getBookBySelfLink(b.selfLink).then((res) => {
-          temp.author = temp.author || res?.volumeInfo?.authors?.[0] || "Unknown author";
-          temp.imageLinks = temp.imageLinks || res?.volumeInfo?.imageLinks;
-        });
-        return temp;
-      }).filter(b => b !== null);
+          getBookBySelfLink(b.selfLink).then((res) => {
+            temp.author =
+              temp.author || res?.volumeInfo?.authors?.[0] || "Unknown author";
+            temp.imageLinks = temp.imageLinks || res?.volumeInfo?.imageLinks;
+          });
+          return temp;
+        })
+        .filter((b: Book | null) => b !== null);
       return { books };
     } else {
       return { error: await res.text() };

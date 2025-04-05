@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 // src/books.ts
 import { db } from "./firebase";
 import {
@@ -8,14 +9,15 @@ import {
   updateDoc,
   DocumentReference,
 } from "firebase/firestore";
+import { Book } from "./interfaces/Book";
 
-interface Book {
-  title: string;
-  author: string;
-  googleBooksId: string;
-  favorite?: boolean;
-  [key: string]: any;
-}
+// interface Book {
+//   title: string;
+//   author: string;
+//   googleBooksId: string;
+//   favorite?: boolean;
+//   [key: string]: any;
+// }
 
 const listTypes: { [key: string]: string } = {
   reading_books: "Reading",
@@ -38,7 +40,11 @@ async function getList(uid: string, type: string): Promise<Book[]> {
   }
 }
 
-async function updateList(uid: string, type: string, newList: Book[]): Promise<void> {
+async function updateList(
+  uid: string,
+  type: string,
+  newList: Book[]
+): Promise<void> {
   if (!(type in listTypes)) {
     throw new Error("This type of list does not exist.");
   }
