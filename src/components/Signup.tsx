@@ -14,8 +14,7 @@ const Signup = () => {
   const [password, setPassword] = useState("");
   const [password2, setPassword2] = useState("");
   const [errMsg, setErrMsg] = useState("");
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [validated, setValidated] = useState(false);
+  const [, setValidated] = useState(false);
 
   const navigate = useNavigate();
 
