@@ -1,4 +1,4 @@
-import { useContext } from "react";
+import { useContext, useRef } from "react";
 import {
   BrowserRouter,
   Outlet,
@@ -26,32 +26,37 @@ import "primereact/resources/themes/lara-light-teal/theme.css"; // theme
 import "primereact/resources/primereact.min.css"; // core css
 import "primeicons/primeicons.css"; // icons
 import "primeflex/primeflex.css"; // flex
+import { ToastContextProvider } from "./toast-context";
+import { Menu } from 'primereact/menu';
+import { Avatar } from 'primereact/avatar';
 
 function App() {
   return (
     <BrowserRouter>
       <AuthProvider>
-        <Routes>
-          <Route element={<MainLayout />}>
-            <Route index element={<HomePage />} />
-            <Route
-              path="toread"
-              element={<BookList listType="toread_books" listName="To read" />}
-            />
-            <Route
-              path="read"
-              element={<BookList listType="read_books" listName="Read" />}
-            />
-            <Route
-              path="reading"
-              element={<BookList listType="reading_books" listName="Reading" />}
-            />
-            <Route path="favorites" element={<FavoritesPage />} />
-            <Route path="login" element={<LoginForm />} />
-            <Route path="signup" element={<Signup />} />
-            <Route path="search" element={<SearchBook />} />
-          </Route>
-        </Routes>
+        <ToastContextProvider>
+          <Routes>
+            <Route element={<MainLayout />}>
+              <Route index element={<HomePage />} />
+              <Route
+                path="toread"
+                element={<BookList listType="toread_books" listName="To read" />}
+              />
+              <Route
+                path="read"
+                element={<BookList listType="read_books" listName="Read" />}
+              />
+              <Route
+                path="reading"
+                element={<BookList listType="reading_books" listName="Reading" />}
+              />
+              <Route path="favorites" element={<FavoritesPage />} />
+              <Route path="login" element={<LoginForm />} />
+              <Route path="signup" element={<Signup />} />
+              <Route path="search" element={<SearchBook />} />
+            </Route>
+          </Routes>
+        </ToastContextProvider>
       </AuthProvider>
     </BrowserRouter>
   );
@@ -73,6 +78,7 @@ function MainLayout() {
     { label: "Reading", command: () => navigate("/reading") },
     { label: "Read", command: () => navigate("/read") },
     { label: "Favorites", command: () => navigate("/favorites") },
+    { label: "Search", command: () => navigate("/search") },
   ];
 
   const startMenuItems = (
@@ -89,20 +95,12 @@ function MainLayout() {
   const endMenuItems = (
     <>
       {user?.uid ? (
-        <>
-          <Button
-            label={user.displayName as string}
-            icon="pi pi-user"
-            className="p-mr-3"
-            text
-          />
-          <Button
-            severity="danger"
-            label="Logout"
-            icon="pi pi-sign-out"
-            onClick={handleLogout}
-          />
-        </>
+        <Button
+          icon="pi pi-user"
+          className="p-mr-3"
+          text
+          onClick={(event) => userMenu.current?.toggle(event)}
+        />
       ) : (
         <Button
           label="Login"
@@ -114,10 +112,34 @@ function MainLayout() {
     </>
   );
 
+  const userMenu = useRef<Menu>(null);
+
+  const userMenuItems = [
+    {
+      template: (item, options) => {
+        return (
+          <div className="flex flex-row justify-content-center align-items-center">
+            <Avatar image={user?.uid ? user.photoURL : ""} className="mr-2" shape="circle" />
+            <span className="font-bold">{user?.uid ? user.displayName : "Unknown"}</span>
+          </div>
+        );
+      }
+    },
+    {
+      separator: true
+    },
+    {
+      label: 'Logout',
+      icon: 'pi pi-sign-out',
+      command: () => handleLogout()
+    },
+  ];
+
   return (
     <>
       <header>
         <Menubar model={menuItems} start={startMenuItems} end={endMenuItems} />
+        <Menu model={userMenuItems} popup ref={userMenu} />
       </header>
       <main>
         <Panel className="p-mt-3 p-p-3">

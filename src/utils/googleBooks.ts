@@ -1,19 +1,10 @@
 // src/googleBooks.ts
 
+import { Book } from "../interfaces/Book";
+import { RawGoogleBook } from "../interfaces/GoogleBook";
 import { getErrorMessage } from "./errorHelpers";
 
 const googleAPI = "https://www.googleapis.com/books/v1/volumes?q=";
-
-interface Book {
-  title: string;
-  author: string;
-  googleBooksId: string;
-  imageLinks?: {
-    smallThumbnail?: string;
-    thumbnail?: string;
-  };
-  isbnCodes?: Array<{ type: string; identifier: string }>;
-}
 
 interface BookResult {
   error?: string;
@@ -35,14 +26,23 @@ const searchBook = async (
     if (res.ok) {
       const list = await res.json();
       if (list.totalItems === 0) return { books: [] };
+      // sometimes results have duplicate elements (same book but different etags that represents the resource version in the api)
+      const foundIds = new Map();
+      const books = list.items.map((b: RawGoogleBook): Book | null => {
+        if (foundIds.has(b.id)) {
+          return null;
+        }
+        foundIds.set(b.id, true);
 
-      const books = list.items.map((b: any): Book => {
         const temp: Book = {
           title: b.volumeInfo.title,
           author: b.volumeInfo.authors?.[0] || "Unknown author",
           googleBooksId: b.id,
           imageLinks: b.volumeInfo.imageLinks,
           isbnCodes: b.volumeInfo.industryIdentifiers,
+          id: undefined,
+          favorite: false,
+          list: undefined
         };
 
         getBookBySelfLink(b.selfLink).then((res) => {
@@ -50,7 +50,7 @@ const searchBook = async (
           temp.imageLinks = temp.imageLinks || res?.volumeInfo?.imageLinks;
         });
         return temp;
-      });
+      }).filter(b => b !== null);
       return { books };
     } else {
       return { error: await res.text() };

@@ -63,22 +63,32 @@ const HomePage = () => {
 
   const responsiveOptions = [
     {
-      breakpoint: "1400px",
-      numVisible: 7,
-      numScroll: 7,
+      breakpoint: "1800px",
+      numVisible: 6,
+      numScroll: 6,
     },
     {
-      breakpoint: "1199px",
+      breakpoint: "1600px",
       numVisible: 5,
       numScroll: 5,
     },
     {
-      breakpoint: "767px",
+      breakpoint: "1400px",
+      numVisible: 4,
+      numScroll: 4,
+    },
+    {
+      breakpoint: "1050px",
       numVisible: 3,
       numScroll: 3,
     },
     {
-      breakpoint: "575px",
+      breakpoint: "850px",
+      numVisible: 2,
+      numScroll: 2,
+    },
+    {
+      breakpoint: "600px",
       numVisible: 1,
       numScroll: 1,
     },
@@ -107,17 +117,15 @@ const HomePage = () => {
                 </div>
               ) : (
                 <div className="p-grid p-align-center p-mb-3">
-                  {/* {chooseListFromType(listType as ListTypeKey).map((b, i) => (
-                    <BookCard key={i} book={b} />
-                  ))} */}
                   <Carousel
-                    value={chooseListFromType(listType as ListTypeKey)}
+                    value={chooseListFromType(listType as ListTypeKey).slice(0, 10)}
                     numVisible={7}
                     numScroll={7}
                     responsiveOptions={responsiveOptions}
                     className="book-carousel"
                     // circular
                     itemTemplate={bookTemplate}
+                    showIndicators={false}
                   />
                 </div>
               )}

@@ -2,12 +2,12 @@ import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../auth/AuthContext";
 import { getList, listTypes, updateList } from "../books";
 import { Button } from "primereact/button";
-import { Message } from "primereact/message";
 import { ProgressSpinner } from "primereact/progressspinner";
 import { useLocation, useNavigate } from "react-router-dom";
 import { AddEditForm } from "./AddEditForm";
 import { BookRow } from "./BookRow";
 import { Book } from "../interfaces/Book";
+import { useToastContext } from "../toast-context.tsx";
 
 type ListTypeKey = "toread_books" | "read_books" | "reading_books";
 
@@ -18,12 +18,11 @@ interface BookListProps {
 
 const BookList = (props: BookListProps) => {
   const { user } = useContext(AuthContext);
+  const { showErrorToast, showSuccessToast } = useToastContext();
   const location = useLocation();
   const navigate = useNavigate();
 
   const [loading, setLoading] = useState(true);
-  const [errMsg, setErrMsg] = useState("");
-  const [infoMsg, setInfoMsg] = useState<string>(location.state?.infoMsg || "");
   const [books, setBooks] = useState<Book[]>([]);
 
   const [editBook, setEditBook] = useState(false);
@@ -38,10 +37,9 @@ const BookList = (props: BookListProps) => {
     } else {
       try {
         const list = await getList(user.uid, props.listType);
-        setErrMsg("");
         setBooks(list);
       } catch (err: any) {
-        setErrMsg(err.message);
+        showErrorToast(err.message);
       } finally {
         setLoading(false);
       }
@@ -65,7 +63,7 @@ const BookList = (props: BookListProps) => {
     });
     await updateList(user.uid, props.listType, newlist);
     fetchBooks();
-    setInfoMsg("Book removed from the list");
+    showSuccessToast("Book removed from the list");
   };
 
   const handleUpdate = async (id: number, book: Book, showMsg = true) => {
@@ -83,30 +81,11 @@ const BookList = (props: BookListProps) => {
     setEditIndex(-1);
     await updateList(user.uid, props.listType, newlist);
     fetchBooks();
-    if (showMsg) setInfoMsg("Book updated!");
+    if (showMsg) showSuccessToast("Book updated!");
   };
 
   return (
     <div className="p-grid p-justify-center">
-      {errMsg && (
-        <Message
-          severity="error"
-          text={errMsg}
-          onClose={() => setErrMsg("")}
-          closable
-          className="p-mb-3"
-        />
-      )}
-      {infoMsg && (
-        <Message
-          severity="success"
-          text={infoMsg}
-          onClose={() => setInfoMsg("")}
-          closable
-          className="p-mb-3"
-        />
-      )}
-
       {loading ? (
         <div className="p-col-12 p-mt-5 p-d-flex p-jc-center">
           <ProgressSpinner />
@@ -138,8 +117,9 @@ const BookList = (props: BookListProps) => {
                     id={i}
                     book={b}
                     list={props.listType}
-                    favoritesPage={false}
-                    handleDelete={handleDelete}
+                    showBookListTag={false}
+                    showFavoriteButton={true}
+                    handleRemoveFromList={handleDelete}
                     handleUpdate={(book) => handleUpdate(i, book, false)}
                     toggleEditBook={() => {
                       setEditIndex(i);

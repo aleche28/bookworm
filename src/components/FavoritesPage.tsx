@@ -3,21 +3,16 @@ import { AuthContext } from "../auth/AuthContext";
 import { BookRow } from "./BookRow";
 import { getFavorites, getList, updateList } from "../books";
 import { useNavigate } from "react-router-dom";
-import { Toast } from "primereact/toast";
 import { ProgressSpinner } from "primereact/progressspinner";
-import { Card } from "primereact/card";
-import * as React from "react";
 import { Book } from "../interfaces/Book";
+import { useToastContext } from "../toast-context";
 
 const FavoritesPage = () => {
   const { user } = useContext(AuthContext);
-
+  const { showErrorToast } = useToastContext();
   const [loading, setLoading] = useState(true);
-  const [errMsg, setErrMsg] = useState("");
-  const [infoMsg, setInfoMsg] = useState("");
   const [books, setBooks] = useState<Book[]>([]);
 
-  const toast = React.useRef<any>(null);
   const navigate = useNavigate();
 
   async function fetchBooks() {
@@ -29,10 +24,9 @@ const FavoritesPage = () => {
     } else {
       try {
         const list = await getFavorites(user.uid);
-        setErrMsg("");
         setBooks(list);
       } catch (err: any) {
-        setErrMsg(err.message);
+        showErrorToast(err.message);
       } finally {
         setLoading(false);
       }
@@ -61,22 +55,6 @@ const FavoritesPage = () => {
 
   return (
     <>
-      <Toast ref={toast} />
-      {errMsg &&
-        toast.current?.show({
-          severity: "error",
-          summary: "Error",
-          detail: errMsg,
-          life: 3000,
-        })}
-      {infoMsg &&
-        toast.current?.show({
-          severity: "info",
-          summary: "Info",
-          detail: infoMsg,
-          life: 3000,
-        })}
-
       {user?.uid && (
         <>
           <h2>Favorites</h2>
@@ -89,15 +67,14 @@ const FavoritesPage = () => {
               {books.length > 0 ? (
                 <div className="p-grid p-justify-center book-rows-container">
                   {books.map((b, i) => (
-                    <Card key={i} className="p-col-12 p-md-8 p-lg-6">
-                      <BookRow
-                        key={i}
-                        id={i}
-                        book={b}
-                        favoritesPage={true}
-                        handleUpdate={handleUpdate}
-                      />
-                    </Card>
+                    <BookRow
+                      key={i}
+                      id={i}
+                      book={b}
+                      showBookListTag={true}
+                      showFavoriteButton={false}
+                      handleUpdate={handleUpdate}
+                    />
                   ))}
                 </div>
               ) : (
