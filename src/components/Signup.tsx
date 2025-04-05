@@ -14,6 +14,7 @@ const Signup = () => {
   const [password, setPassword] = useState("");
   const [password2, setPassword2] = useState("");
   const [errMsg, setErrMsg] = useState("");
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [validated, setValidated] = useState(false);
 
   const navigate = useNavigate();
@@ -50,11 +51,7 @@ const Signup = () => {
         {errMsg && (
           <Message severity="error" text={errMsg} className="p-mb-3" />
         )}
-        <form
-          noValidate
-          validated={validated.toString()}
-          onSubmit={handleSubmit}
-        >
+        <form noValidate onSubmit={handleSubmit}>
           <div className="p-field p-my-3">
             <label htmlFor="email">Email</label>
             <InputText
